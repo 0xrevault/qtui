@@ -42,10 +42,10 @@ scp "$ARCHIVE_PATH" "$HOST:/tmp/ui_deploy.tar.gz"
 ssh "$HOST" "set -euo pipefail; \
   FILE=/tmp/ui_deploy.tar.gz; \
   # Compute remote sha256 (prefer sha256sum)
-  ACT=\"\$( (sha256sum \"$FILE\" 2>/dev/null || shasum -a 256 \"$FILE\") | awk '{print \$1}')\"; \
-  if [ -z \"$ACT\" ]; then echo 'Error: no sha256 tool on remote' >&2; exit 10; fi; \
-  if [ \"$ACT\" != \"$LOCAL_SHA\" ]; then echo \"Error: checksum mismatch (remote=$ACT, local=$LOCAL_SHA)\" >&2; exit 11; fi; \
-  rm -rf '$REMOTE_UI_DIR'; mkdir -p /opt; tar -xzf \"$FILE\" -C /opt; rm -f \"$FILE\"; \
+  ACT=\"\$( (sha256sum \"\$FILE\" 2>/dev/null || shasum -a 256 \"\$FILE\") | awk '{print \\$1}')\"; \
+  if [ -z \"\$ACT\" ]; then echo 'Error: no sha256 tool on remote' >&2; exit 10; fi; \
+  if [ \"\$ACT\" != \"$LOCAL_SHA\" ]; then echo \"Error: checksum mismatch (remote=\$ACT, local=$LOCAL_SHA)\" >&2; exit 11; fi; \
+  rm -rf '$REMOTE_UI_DIR'; mkdir -p /opt; tar -xzf \"\$FILE\" -C /opt; rm -f \"\$FILE\"; \
   if [ -f '$REMOTE_UI_DIR/systemui' ]; then chmod +x '$REMOTE_UI_DIR/systemui' || true; fi; \
   true"
 
