@@ -66,24 +66,15 @@ tmp_local_manifest="$(mktemp)"
 (
   cd "$LOCAL_UI_DIR"
   if command -v sha256sum >/dev/null 2>&1; then
-    find . -type f -exec sha256sum '{}' \; | LC_ALL=C sort > "$tmp_local_manifest"
+    LC_ALL=C find . -type f -print | LC_ALL=C sort | while IFS= read -r f; do sha256sum "$f"; done > "$tmp_local_manifest"
   else
-    shasum -a 256 $(find . -type f -print) | LC_ALL=C sort > "$tmp_local_manifest"
+    LC_ALL=C find . -type f -print | LC_ALL=C sort | while IFS= read -r f; do shasum -a 256 "$f"; done > "$tmp_local_manifest"
   fi
 )
 
-# Create remote manifest and compare
-remote_manifest_cmd='set -e; cd '"'$REMOTE_UI_DIR'"'; '
-remote_manifest_cmd+=$'if command -v sha256sum >/dev/null 2>&1; then\n'
-remote_manifest_cmd+=$'  find . -type f -exec sha256sum '{}' \\; | LC_ALL=C sort\n'
-remote_manifest_cmd+=$'elif command -v shasum >/dev/null 2>&1; then\n'
-remote_manifest_cmd+=$'  shasum -a 256 $(find . -type f -print) | LC_ALL=C sort\n'
-remote_manifest_cmd+=$'else\n'
-remote_manifest_cmd+=$'  echo NO_SHA_TOOL\n'
-remote_manifest_cmd+=$'fi\n'
-
+# Create remote manifest with a single, simple command
 tmp_remote_manifest="$(mktemp)"
-ssh "$HOST" "$remote_manifest_cmd" > "$tmp_remote_manifest"
+ssh "$HOST" "set -e; cd '$REMOTE_UI_DIR'; if command -v sha256sum >/dev/null 2>&1; then LC_ALL=C find . -type f -print | LC_ALL=C sort | while IFS= read -r f; do sha256sum \"\$f\"; done; elif command -v shasum >/dev/null 2>&1; then LC_ALL=C find . -type f -print | LC_ALL=C sort | while IFS= read -r f; do shasum -a 256 \"\$f\"; done; else echo NO_SHA_TOOL; fi" > "$tmp_remote_manifest"
 
 if grep -q '^NO_SHA_TOOL$' "$tmp_remote_manifest"; then
   echo "Error: Remote host lacks sha256sum/shasum; cannot verify all files." >&2
