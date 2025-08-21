@@ -10,12 +10,13 @@ import QtQuick 2.0
 import QtGraphicalEffects 1.12
 import QtQuick.Controls 2.12
 import com.alientek.qmlcomponents 1.0
+
 Item {
     visible: main_swipeView.currentIndex !== 0
     anchors.fill: parent
     ApkListModel {
         id: apkListModel
-        Component.onCompleted: apkListModel.add(appCurrtentDir + "/src/"+ hostName +"/apk3.cfg")
+        Component.onCompleted: apkListModel.add(appCurrtentDir + "/src/" + hostName + "/apk3.cfg")
     }
     FuzzPanel {
         id: fuzzPanel
@@ -56,7 +57,7 @@ Item {
         height: control_item.width / 12 * 1.5
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
+        anchors.bottomMargin: 20
 
         ListView {
             id: item_listView
@@ -83,8 +84,7 @@ Item {
             height: width
             enabled: installed
             onClicked: {
-                launchActivity(programName, mapToGlobal(appIcon.x, appIcon.y).x, mapToGlobal(appIcon.x, appIcon.y).y,
-                               appIcon, apkIconPath, main_swipeView.currentIndex, SystemUICommonApiServer.ClickIcon)
+                launchActivity(programName, mapToGlobal(appIcon.x, appIcon.y).x, mapToGlobal(appIcon.x, appIcon.y).y, appIcon, apkIconPath, main_swipeView.currentIndex, SystemUICommonApiServer.ClickIcon);
             }
             background: Image {
                 id: appIcon

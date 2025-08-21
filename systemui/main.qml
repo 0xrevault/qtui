@@ -124,19 +124,7 @@ Window {
                     Page1 {}
                     Page2 {}
                 }
-                Timer {
-                    id: indicatorShowTimer
-                    repeat: false
-                    onTriggered: explainText.opacity = 1
-                    interval: 1000
-                }
-                Connections {
-                    target: main_swipeView
-                    function onCurrentIndexChanged() {
-                        explainText.opacity = 0;
-                        indicatorShowTimer.restart();
-                    }
-                }
+                // Removed explain button/timer; keep a simple page indicator
                 BottomApp {}
                 PageIndicator {
                     id: indicator
@@ -147,48 +135,14 @@ Window {
                     anchors.bottomMargin: scaleFfactor * 110
                     anchors.horizontalCenter: parent.horizontalCenter
                     delegate: indicator_delegate
-                    Button {
-                        id: explainBt
-                        width: 60 * scaleFfactor
-                        height: 30 * scaleFfactor
-                        anchors.centerIn: parent
-                        opacity: explainBt.pressed ? 0.5 : 1.0
-                        background: Rectangle {
-                            color: "#44ffffff"
-                            anchors.fill: parent
-                            radius: height / 2
-                            Text {
-                                id: explainText
-                                Behavior on opacity {
-                                    PropertyAnimation {
-                                        duration: 500
-                                        easing.type: Easing.Linear
-                                    }
-                                }
-                                opacity: 1
-                                text: qsTr("说明")
-                                color: "white"
-                                font.pixelSize: 12 * scaleFfactor
-                                anchors.centerIn: parent
-                            }
-                        }
-                        onClicked: {
-                            dialog.width = window.width / 3 * 2;
-                            dialog.height = window.height / 3 * 2;
-                            dialog.x = (window.width - window.width / 3 * 2) / 2;
-                            dialog.y = (window.height - window.height / 3 * 2) / 2;
-                            dialog.open();
-                            instructionsFileRead.readInstructions();
-                        }
-                    }
                     Component {
                         id: indicator_delegate
                         Rectangle {
-                            opacity: 1 - explainText.opacity
-                            width: scaleFfactor * 6
-                            height: scaleFfactor * 6
-                            color: main_swipeView.currentIndex !== index ? "gray" : "#dddddd"
-                            radius: scaleFfactor * 3
+                            opacity: 1
+                            width: scaleFfactor * 8
+                            height: scaleFfactor * 8
+                            radius: width / 2
+                            color: main_swipeView.currentIndex === index ? "#ffffff" : "#808080"
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -236,75 +190,6 @@ Window {
             }
             Item {
                 Layout.fillWidth: true
-            }
-        }
-
-        Dialog {
-            id: dialog
-            modal: true
-            width: explainBt.width
-            height: explainBt.height
-            // Component.onCompleted: {
-            //     dialog.x = explainBt.mapToGlobal(explainBt.x, explainBt.y).x
-            //     dialog.y = explainBt.mapToGlobal(explainBt.x, explainBt.y).y
-            // }
-            background: CustomDialog {
-                anchors.fill: parent
-                mTarget: rootItem
-                mRadius: 10 * scaleFfactor
-                mColor: "#cccbc7"
-                mOpacity: 0.9
-                onOkSignal: {
-                    dialog.close();
-                }
-            }
-            Text {
-                anchors.top: parent.top
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr("正点原子官网：https://www.alientek.com")
-                font.pixelSize: 20 * scaleFfactor
-                font.bold: true
-                verticalAlignment: Text.AlignVCenter
-                anchors.bottom: flickable.top
-                color: "#4169e1"
-            }
-            Flickable {
-                id: flickable
-                width: parent.width
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 80 * scaleFfactor
-                anchors.top: parent.top
-                anchors.topMargin: 50 * scaleFfactor
-                clip: true
-                contentHeight: instructionsFileReadText.contentHeight + 10
-                ScrollBar.vertical: ScrollBar {
-                    id: scrollBar
-                    width: scaleFfactor * 8
-                    opacity: 1.0
-                    onActiveChanged: {
-                        active = true;
-                    }
-                    Component.onCompleted: {
-                        scrollBar.active = true;
-                    }
-                    contentItem: Rectangle {
-                        implicitWidth: scaleFfactor * 6
-                        implicitHeight: scaleFfactor * 100
-                        radius: scaleFfactor * 2
-                        color: scrollBar.hovered ? "#88101010" : "#33101010"
-                    }
-                }
-
-                Text {
-                    id: instructionsFileReadText
-                    anchors.fill: parent
-                    anchors.margins: 20
-                    text: qsTr(instructionsFileRead.instructionsContent)
-                    font.pixelSize: 15 * scaleFfactor
-                    lineHeight: 25 * scaleFfactor
-                    wrapMode: Text.WrapAnywhere
-                    lineHeightMode: Text.FixedHeight
-                }
             }
         }
     }
