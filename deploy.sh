@@ -61,6 +61,7 @@ ssh "$HOST" "set -e; mkdir -p /opt"
 ssh "$HOST" "set -e; tar -xzf $REMOTE_FILE -C /opt"
 ssh "$HOST" "set -e; rm -f $REMOTE_FILE"
 ssh "$HOST" "set -e; [ -f '$REMOTE_UI_DIR/systemui' ] && chmod +x '$REMOTE_UI_DIR/systemui' || true"
+ssh "$HOST" "set -e; sync"
 
 rm -f "$ARCHIVE_PATH"
 
