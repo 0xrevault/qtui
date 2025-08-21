@@ -39,8 +39,9 @@ fi
 
 scp "$ARCHIVE_PATH" "$HOST:/tmp/ui_deploy.tar.gz"
 
-# Compute remote checksum in a single-purpose command
-REMOTE_SHA=$(ssh "$HOST" "(sha256sum /tmp/ui_deploy.tar.gz 2>/dev/null || shasum -a 256 /tmp/ui_deploy.tar.gz) | awk '{print \\$1}'" || true)
+# Compute remote checksum in clear, split form
+REMOTE_FILE="/tmp/ui_deploy.tar.gz"
+REMOTE_SHA=$(ssh "$HOST" "sha256sum $REMOTE_FILE 2>/dev/null || shasum -a 256 $REMOTE_FILE" | awk '{print $1}' || true)
 
 if [ -z "${REMOTE_SHA:-}" ]; then
   echo "Error: no sha256 tool on remote or failed to compute checksum" >&2
@@ -57,8 +58,8 @@ fi
 # Extract on remote in separate, clear steps
 ssh "$HOST" "set -e; rm -rf '$REMOTE_UI_DIR'"
 ssh "$HOST" "set -e; mkdir -p /opt"
-ssh "$HOST" "set -e; tar -xzf /tmp/ui_deploy.tar.gz -C /opt"
-ssh "$HOST" "set -e; rm -f /tmp/ui_deploy.tar.gz"
+ssh "$HOST" "set -e; tar -xzf $REMOTE_FILE -C /opt"
+ssh "$HOST" "set -e; rm -f $REMOTE_FILE"
 ssh "$HOST" "set -e; [ -f '$REMOTE_UI_DIR/systemui' ] && chmod +x '$REMOTE_UI_DIR/systemui' || true"
 
 rm -f "$ARCHIVE_PATH"
