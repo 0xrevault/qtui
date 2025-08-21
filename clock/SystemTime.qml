@@ -1,0 +1,79 @@
+/******************************************************************
+Copyright © Deng Zhimao Co., Ltd. 2021-2030. All rights reserved.
+* @brief         SystemTime.qml
+* @author        Deng Zhimao
+* @email         dengzhimao@alientek.com/1252699831@qq.com
+* @date          2024-07-23
+* @link          http://www.openedv.com/forum.php
+*******************************************************************/
+import QtQuick 2.12
+Item {
+    property string system_time: Qt.formatDateTime(new Date(), "hh:mm" )
+    property string system_week: "周三"
+    property string system_date1: ""
+    property string system_date2: ""
+    property string system_date3: "10"
+    property string system_hour
+    property string system_minutes
+    signal systemTimeTriggered()
+
+    function currentTime(){
+        return Qt.formatDateTime(new Date(), "hh:mm" )
+    }
+
+    function currentHour(){
+        return Qt.formatDateTime(new Date(), "hh" )
+    }
+    function currentMin(){
+        return Qt.formatDateTime(new Date(), "mm" )
+    }
+
+    function currentDate1(){
+        return Qt.formatDateTime(new Date(), "ddd MM,dd" )
+    }
+
+    function currentWeek(){
+        return Qt.formatDateTime(new Date(), "ddd" )
+    }
+
+    function currentDate2(){
+        return Qt.formatDateTime(new Date(), languageManager.language === 1 ? "MM月dd日" : "MM/dd" )
+    }
+
+    function currentDate3(){
+        return Qt.formatDateTime(new Date(), "dd" )
+    }
+
+
+    Timer{
+        id: timer
+        interval: 1000
+        repeat: true
+        running: visible
+        onTriggered:{
+            systemTimeTriggered()
+            system_time = currentTime()
+            system_date1 = currentDate1()
+            system_date2 = currentDate2()
+            system_date3 = currentDate3()
+            system_week = currentWeek()
+            system_hour = currentHour()
+            system_minutes = currentMin()
+
+            if (system_week === "Sun")
+                system_week = qsTr("周日")
+            else if (system_week === "Mon")
+                system_week = qsTr("周一")
+            else if (system_week === "Tue")
+                system_week = qsTr("周二")
+            else if (system_week === "Wed")
+                system_week = qsTr("周三")
+            else if (system_week === "Thu")
+                system_week = qsTr("周四")
+            else if (system_week === "Fri")
+                system_week = qsTr("周五")
+            else if (system_week === "Sat")
+                system_week = qsTr("周六")
+        }
+    }
+}

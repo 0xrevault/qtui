@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>CustomPanel.qml</file>
+        <file>FuzzPanel.qml</file>
+        <file>CustomRectangle.qml</file>
+        <file>CustomSwitch.qml</file>
+        <file>SystemTime.qml</file>
+    </qresource>
+</RCC>

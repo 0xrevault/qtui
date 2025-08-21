@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>AppMainBody.qml</file>
+        <file>SystemTime.qml</file>
+        <file>ClockPage1.qml</file>
+        <file>ClockPage2.qml</file>
+        <file>ClockLayout.qml</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/folder.png</file>
+        <file>icons/next.png</file>
+        <file>icons/file.png</file>
+        <file>icons/harddisk.png</file>
+        <file>icons/usb.png</file>
+        <file>icons/otherfolder.png</file>
+    </qresource>
+</RCC>

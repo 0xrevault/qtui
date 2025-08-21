@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/btn_listjump.png</file>
+        <file>icons/btn_listrandom.png</file>
+        <file>icons/btn_listscircle_single.png</file>
+        <file>icons/btn_listsingle.png</file>
+        <file>icons/btn_next.png</file>
+        <file>icons/btn_pause.png</file>
+        <file>icons/btn_play.png</file>
+        <file>icons/btn_playlist.png</file>
+        <file>icons/btn_previous.png</file>
+        <file>icons/btn_puase.png</file>
+        <file>icons/broadcasting_station.png</file>
+        <file>icons/btn_volumedown.png</file>
+        <file>images/default.jpg</file>
+        <file>icons/btn_volumeup.png</file>
+        <file>icons/effects_checked.png</file>
+        <file>icons/effects_unchecked.png</file>
+    </qresource>
+</RCC>

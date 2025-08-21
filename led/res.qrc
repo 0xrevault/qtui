@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/flashlight_off.png</file>
+        <file>icons/flashlight_on.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/dashboardbg1.png</file>
+        <file>images/dashboardbg2.png</file>
+        <file>icons/left.png</file>
+        <file>icons/right.png</file>
+        <file>images/bg.jpg</file>
+    </qresource>
+</RCC>

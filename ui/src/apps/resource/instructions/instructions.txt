@@ -1,0 +1,46 @@
+中文说明:
+1.关于UI
+用户界面（UI）由正点原子团队精心采用Qt框架编写,旨在促进技术交流与共享。
+      
+2.关于显示
+MP257中RGB显示使用的是RGB565数据格式。由于RGB565显示效果比不上RGB888，所以在RGB屏幕上会看到某些渐变效果不理想的情况，也就是渐变效果断层。此种情况非RGB屏幕硬件原因（屏幕硬件支持RGB888），请大家知悉！如果需要显示效果更好，设计时尽量使用纯色设计,或者使用MIPI或LVDS接口，这两款接口的屏幕在MP257上支持RGB888。
+ 
+3.关于相机
+摄像头相关的应用需要搭配正点原子IMX335摄像头模块使用，不支持其他型号摄像头。
+      
+4.关于时间
+请自行设置系统时间，默认系统时间出厂是不设置的，可查阅快速体验手册设置系统时间，这样Qt就会显示正确的日期时间了。
+
+5.关于流畅度
+请注意内存使用，App开启过多，界面容易出现卡顿。
+
+6.关于/联系作者
+邮箱：dengzhiamo@alientek.com
+企鹅号：1252699831
+B站：dengzhimao
+正点原子官网：https://www.alientek.com
+
+English:
+
+1.Regarding UI
+The User Interface (UI) is meticulously developed by the ALIENTEK team using the Qt framework, with the aim of facilitating technical exchange and sharing.
+
+2.Regarding Display
+The RGB display in the MP257 uses the RGB565 data format. Since the display effect of RGB565 is not as good as that of RGB888, you may notice some unsatisfactory gradient effects on the RGB screen, which means there will be banding in the gradient effects. This situation is not due to the hardware of the RGB screen (the screen hardware supports RGB888). Please be aware of this! If you need a better display effect, try to use a solid - color design in your design, or use screens with MIPI or LVDS interfaces. These two types of interface screens support RGB888 on the MP257.
+
+3.Regarding Camera
+Applications related to the camera need to be used in conjunction with the ALIENTEK IMX335 camera module. Other camera models are not supported.
+
+4.Regarding Time
+Please set the system time by yourself. The default system time is not set when the device leaves the factory. You can refer to the Quick Start Guide to set the system time. In this way, Qt will display the correct date and time.
+
+5.Regarding Fluidity
+Please pay attention to memory usage. If too many apps are opened, the interface is prone to lag.
+
+6.Regarding/Contacting the Author
+Email: dengzhiamo@alientek.com
+QQ number: 1252699831
+Bilibili account: dengzhimao
+ALIENTEK official website: https://www.alientek.com
+
+      

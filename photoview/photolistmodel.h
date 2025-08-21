@@ -1,0 +1,81 @@
+/******************************************************************
+Copyright © Deng Zhimao Co., Ltd. 1990-2030. All rights reserved.
+* @projectName   photoview
+* @brief         photoListModel.h
+* @author        Deng Zhimao
+* @email         1252699831@qq.com
+* @date          2020-07-16
+*******************************************************************/
+#ifndef PHOTOLISTMODEL_H
+#define PHOTOLISTMODEL_H
+
+#include <QAbstractListModel>
+#include <QDebug>
+#include <QUrl>
+#include <QFileSystemWatcher>
+
+class photo {
+public:
+    explicit photo(QUrl path, QString title);
+    QString gettitle() const;
+    QUrl getpath() const;
+    void settitle(QString title);
+
+private:
+    QString  m_title;
+    QUrl m_path;
+};
+
+class PhotoListModel : public QAbstractListModel
+{
+    Q_OBJECT
+
+    Q_PROPERTY(QString albumPath READ albumPath WRITE setAlbumPath NOTIFY albumPathChanged)
+    Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
+public:
+    explicit PhotoListModel(QObject *parent = 0);
+    ~PhotoListModel();
+    int currentIndex() const;
+    int rowCount(const QModelIndex & parent = QModelIndex()) const;
+    QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
+    Q_INVOKABLE int randomIndex();
+    Q_INVOKABLE QString getcurrentTitle() const;
+    Q_INVOKABLE QUrl getcurrentPath() const;
+    Q_INVOKABLE void add(QString paths);
+    Q_INVOKABLE void move(int from, int to);
+    Q_INVOKABLE void remove(int first, int last);
+    Q_INVOKABLE void removeOne(int index);
+    Q_INVOKABLE void setCurrentTitle(QString title);
+    Q_INVOKABLE void setCurrentIndex(const int & i);
+    Q_INVOKABLE int count();
+    Q_INVOKABLE void addPhoto(QString fileName);
+    Q_INVOKABLE void addPhoto(QUrl path, QString title);
+
+    enum photoRole {
+        pathRole = Qt::UserRole + 1,
+        titleRole,
+    };
+
+    QString albumPath() const;
+    void setAlbumPath(const QString &newAlbumPath);
+    void resetAlbumPath();
+
+signals:
+    void currentIndexChanged();
+    void listModelInit();
+
+    void albumPathChanged();
+
+public slots:
+
+private:
+    QHash<int, QByteArray> roleNames() const;
+
+    int m_currentIndex;
+    QList<photo> phtoListData;
+
+    QString m_albumPath;
+    QFileSystemWatcher *fileSystemWatcher;
+};
+
+#endif // PHOTOLISTMODEL_H

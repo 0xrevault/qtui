@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>AppMainBody.qml</file>
+        <file>SettingsLayout.qml</file>
+        <file>MainPage.qml</file>
+        <file>WifiLayout.qml</file>
+        <file>ItemContent.qml</file>
+        <file>WifiInfo.qml</file>
+        <file>ActionSheet.qml</file>
+        <file>PasswordPanel.qml</file>
+        <file>CustomDialog.qml</file>
+        <file>General.qml</file>
+    </qresource>
+</RCC>

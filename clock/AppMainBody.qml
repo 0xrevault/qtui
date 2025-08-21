@@ -1,0 +1,24 @@
+/******************************************************************
+Copyright © Deng Zhimao Co., Ltd. 2021-2030. All rights reserved.
+* @brief         AppMainBody.qml
+* @author        Deng Zhimao
+* @email         dengzhimao@alientek.com/1252699831@qq.com
+* @date          2024-05-23
+* @link          http://www.openedv.com/forum.php
+*******************************************************************/
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
+Rectangle {
+    property real scaleFfactor: appMainBody.width / 1024
+    anchors.fill: parent
+    color: "black"
+
+    Loader {
+        active: true
+        id: loader
+        asynchronous: true
+        anchors.fill: parent
+        source: "ClockLayout.qml"
+    }
+}
