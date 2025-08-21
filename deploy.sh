@@ -59,4 +59,47 @@ fi
 
 echo "Deploy completed successfully."
 
+echo "[Post] Verifying all deployed files via SHA-256 checksums"
+
+# Create local manifest (relative paths, sorted)
+tmp_local_manifest="$(mktemp)"
+(
+  cd "$LOCAL_UI_DIR"
+  if command -v sha256sum >/dev/null 2>&1; then
+    find . -type f -exec sha256sum '{}' \; | LC_ALL=C sort > "$tmp_local_manifest"
+  else
+    shasum -a 256 $(find . -type f -print) | LC_ALL=C sort > "$tmp_local_manifest"
+  fi
+)
+
+# Create remote manifest and compare
+remote_manifest_cmd='set -e; cd '"'$REMOTE_UI_DIR'"'; '
+remote_manifest_cmd+=$'if command -v sha256sum >/dev/null 2>&1; then\n'
+remote_manifest_cmd+=$'  find . -type f -exec sha256sum '{}' \\; | LC_ALL=C sort\n'
+remote_manifest_cmd+=$'elif command -v shasum >/dev/null 2>&1; then\n'
+remote_manifest_cmd+=$'  shasum -a 256 $(find . -type f -print) | LC_ALL=C sort\n'
+remote_manifest_cmd+=$'else\n'
+remote_manifest_cmd+=$'  echo NO_SHA_TOOL\n'
+remote_manifest_cmd+=$'fi\n'
+
+tmp_remote_manifest="$(mktemp)"
+ssh "$HOST" "$remote_manifest_cmd" > "$tmp_remote_manifest"
+
+if grep -q '^NO_SHA_TOOL$' "$tmp_remote_manifest"; then
+  echo "Error: Remote host lacks sha256sum/shasum; cannot verify all files." >&2
+  rm -f "$tmp_local_manifest" "$tmp_remote_manifest"
+  exit 5
+fi
+
+if ! diff -u "$tmp_local_manifest" "$tmp_remote_manifest" >/dev/null; then
+  echo "Error: SHA-256 mismatch detected between local and remote file trees." >&2
+  echo "Showing first 100 diff lines:" >&2
+  diff -u "$tmp_local_manifest" "$tmp_remote_manifest" | head -n 100 >&2 || true
+  rm -f "$tmp_local_manifest" "$tmp_remote_manifest"
+  exit 6
+fi
+
+rm -f "$tmp_local_manifest" "$tmp_remote_manifest"
+echo "All files verified (SHA-256) successfully."
+
 
