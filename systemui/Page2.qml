@@ -93,39 +93,5 @@ Item {
         }
     }
 
-    Rectangle {
-        width: 160 * scaleFfactor
-        height: 90 * scaleFfactor
-        radius: 12 * scaleFfactor
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: 50 * scaleFfactor
-        color: mouseArea.pressed ? "#DD101010" : "#88101010"
-
-        MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-            onClicked: memoryWatcher.clearCache()
-        }
-        Text {
-            color: "white"
-            text: qsTr("内存")
-            font.pixelSize: scaleFfactor * 15
-            font.bold: true
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.margins: 10
-        }
-        Text {
-            id: txt_progress
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 22 * scaleFfactor
-            font.bold: true
-            font.family: "monospace"
-            text: Math.round(memoryWatcher.memoryUsedPercent) + "%"
-            color: memoryWatcher.memoryUsedPercent <= 60 ? "#1afa29" : (memoryWatcher.memoryUsedPercent <= 70 ? "#ff6d00" : "#E3170D")
-            horizontalAlignment: Text.AlignHCenter
-        }
-    }
+    // memory card removed; use global overlay in main.qml
 }

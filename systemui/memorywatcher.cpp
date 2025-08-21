@@ -172,14 +172,48 @@ void MemoryWatcher::onTimerTimeOunt()
         if (m_devfreqMHz != dfStr) { m_devfreqMHz = dfStr; emit devfreqMHzChanged(); }
     }
 
+    // GPU specifics (utilization, memory used) if available via debugfs/devfreq
+    {
+        QString info;
+        // Common locations to probe (device dependent)
+        // 1) devfreq node containing "gpu" in name
+        QDir df("/sys/class/devfreq");
+        if (df.exists()) {
+            QStringList nodes = df.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+            for (const QString &n : nodes) {
+                if (!n.contains("gpu", Qt::CaseInsensitive)) continue;
+                QString base = df.absoluteFilePath(n);
+                QString cur = base + "/cur_freq";
+                QString minf = base + "/min_freq";
+                QString maxf = base + "/max_freq";
+                auto readNum = [](const QString &p)->qint64{
+                    QFile f(p); if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) return 0;
+                    bool ok=false; qint64 v = QString::fromLatin1(f.readAll()).simplified().toLongLong(&ok); return ok?v:0;
+                };
+                qint64 chz = readNum(cur), mhz = readNum(minf), xhz = readNum(maxf);
+                if (chz>0) info += QString("%1: %2/%3-%4 MHz ").arg(n).arg(chz/1000000).arg(mhz/1000000).arg(xhz/1000000);
+                // Try utilization if exposed (varies by GPU driver)
+                QString utilp = base + "/utilization";
+                QFile uf(utilp);
+                if (uf.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                    QString u = QString::fromLatin1(uf.readAll()).simplified();
+                    if (!u.isEmpty()) info += QString("util:%1 ").arg(u);
+                }
+            }
+        }
+        if (m_gpuInfo != info) { m_gpuInfo = info; emit gpuInfoChanged(); }
+    }
+
     // Compose overlay text
-    QString text = QString("CPU:%1%  Freq:%2MHz  Gov:%3\nMem:%4%  Temp:%5°C  Devfreq:%6")
+    QString text = QString("CPU:%1%  Freq:%2MHz  Gov:%3\nMem:%4%  Temp:%5°C  Devfreq:%6\nGPU:%7  FPS:%8")
             .arg(m_cpuUsagePercent)
             .arg(m_cpuFreqMHz)
             .arg(m_governor)
             .arg(m_memoryUsedPercent)
             .arg(m_temperatureC)
-            .arg(m_devfreqMHz);
+            .arg(m_devfreqMHz)
+            .arg(m_gpuInfo)
+            .arg(m_fps);
     if (m_overlayText != text) { m_overlayText = text; emit overlayTextChanged(); }
 }
 

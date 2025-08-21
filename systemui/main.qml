@@ -51,13 +51,17 @@ Window {
         id: systemUICommonApiServer
         onAppAsktoHideOrShow: function (action) {
             if (action === SystemUICommonApiServer.Hide) {
-                window.hide();
+                // Keep overlay visible across apps: don't hide window; make it pass-through
+                desktop.visible = false;
+                window.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.WindowTransparentForInput;
+                window.show();
             }
             if (action === SystemUICommonApiServer.Show) {
-                window.show();
+                desktop.visible = true;
                 phonebg_scale.xScale = 1.0;
-                window.requestActivate();
                 window.flags = Qt.FramelessWindowHint;
+                window.show();
+                window.requestActivate();
                 systemUICommonApiServer.currtentLauchAppName = "";
             }
         }

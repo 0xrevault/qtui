@@ -25,6 +25,8 @@ class MemoryWatcher : public QObject
     Q_PROPERTY(QString temperatureC READ temperatureC NOTIFY temperatureCChanged FINAL)
     Q_PROPERTY(QString devfreqMHz READ devfreqMHz NOTIFY devfreqMHzChanged FINAL)
     Q_PROPERTY(QString overlayText READ overlayText NOTIFY overlayTextChanged FINAL)
+    Q_PROPERTY(int fps READ fps WRITE setFps NOTIFY fpsChanged FINAL)
+    Q_PROPERTY(QString gpuInfo READ gpuInfo NOTIFY gpuInfoChanged FINAL)
 public:
     explicit MemoryWatcher(QObject *parent = nullptr);
 
@@ -40,6 +42,9 @@ public:
     QString temperatureC() const { return m_temperatureC; }
     QString devfreqMHz() const { return m_devfreqMHz; }
     QString overlayText() const { return m_overlayText; }
+    int fps() const { return m_fps; }
+    Q_INVOKABLE void setFps(int value) { if (m_fps == value) return; m_fps = value; emit fpsChanged(); }
+    QString gpuInfo() const { return m_gpuInfo; }
 
 signals:
     void memoryUsedPercentChanged();
@@ -52,6 +57,8 @@ signals:
     void temperatureCChanged();
     void devfreqMHzChanged();
     void overlayTextChanged();
+    void fpsChanged();
+    void gpuInfoChanged();
 
 private:
     int m_memoryUsedPercent;
@@ -67,6 +74,8 @@ private:
     QString m_temperatureC;
     QString m_devfreqMHz;
     QString m_overlayText;
+    int m_fps = 0;
+    QString m_gpuInfo;
 
 private slots:
     void onTimerTimeOunt();
