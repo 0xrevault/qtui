@@ -11,11 +11,12 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import com.alientek.qmlcomponents 1.0
+
 Item {
     id: page2
     ApkListModel {
         id: apkListModel
-        Component.onCompleted: apkListModel.add(appCurrtentDir + "/src/"+ hostName +"/apk2.cfg")
+        Component.onCompleted: apkListModel.add(appCurrtentDir + "/src/" + hostName + "/apk2.cfg")
     }
 
     ColumnLayout {
@@ -24,11 +25,11 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 30
         GridView {
+            id: item_gridView
             Layout.alignment: Qt.AlignHCenter
             Layout.fillHeight: true
-            width:  control_item.width - control_item.width / 13
+            width: control_item.width - control_item.width / 13
             height: control_item.width / 4 * 5  // three column
-            id: item_gridView
             visible: true
             interactive: false
             clip: false
@@ -38,7 +39,6 @@ Item {
             model: apkListModel
             delegate: item_gridView_delegate
         }
-
     }
 
     Component {
@@ -49,8 +49,7 @@ Item {
             height: item_gridView.cellHeight
             enabled: installed
             onClicked: {
-                launchActivity(programName, mapToGlobal(appIcon.x, appIcon.y).x, mapToGlobal(appIcon.x, appIcon.y).y,
-                               appIcon, apkIconPath, main_swipeView.currentIndex, SystemUICommonApiServer.ClickIcon)
+                launchActivity(programName, mapToGlobal(appIcon.x, appIcon.y).x, mapToGlobal(appIcon.x, appIcon.y).y, appIcon, apkIconPath, main_swipeView.currentIndex, SystemUICommonApiServer.ClickIcon);
             }
 
             background: Image {
@@ -95,9 +94,9 @@ Item {
     }
 
     Rectangle {
-        width: 130 * scaleFfactor
-        height: width
-        radius: 30 * scaleFfactor
+        width: 160 * scaleFfactor
+        height: 90 * scaleFfactor
+        radius: 12 * scaleFfactor
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 50 * scaleFfactor
@@ -117,61 +116,16 @@ Item {
             anchors.left: parent.left
             anchors.margins: 10
         }
-        Item {
-            anchors.centerIn: parent
-            id: control
-            implicitWidth: 100
-            implicitHeight: 100
-            property real progress: memoryWatcher.memoryUsedPercent
-            property real progressStep: 360 / canvas.maximumValue
-            Behavior on progress {
-                NumberAnimation { duration: 1000 }
-            }
-            readonly property real size: Math.min(control.width, control.height)
-            width: 80 * scaleFfactor
-            height: width
-
-            Canvas {
-                id: canvas
-                anchors.fill: parent
-                property real maximumValue: 100
-                Connections {
-                    target: control
-                    function onProgressChanged()  {
-                        canvas.requestPaint()
-                    }
-                }
-                onPaint: {
-                    var ctx = getContext("2d")
-                    ctx.clearRect(0, 0, width, height)
-                    //bgRect
-                    ctx.beginPath()
-                    ctx.strokeStyle = "gray"
-                    ctx.lineWidth = parent.size / 8
-                    ctx.lineCap = "round"
-                    var startAngle = -Math.PI / 180 * 90
-                    var endAngle = startAngle + maximumValue * 2 * Math.PI
-                    ctx.arc(width / 2, height / 2, width / 2 - ctx.lineWidth / 2 - 2, startAngle, endAngle)
-                    ctx.stroke()
-                    // foreRect
-                    ctx.strokeStyle = control.progress <= 60 ? "#1afa29" : (control.progress <= 70 ? "#ff6d00" : "#E3170D")
-                    ctx.beginPath()
-                    endAngle = startAngle + control.progress  * control.progressStep * Math.PI / 180
-                    ctx.arc(width / 2, height / 2, width / 2 - ctx.lineWidth / 2 - 2, startAngle, endAngle)
-                    ctx.stroke()
-                }
-            }
-
-            Text {
-                id: txt_progress
-                anchors.centerIn: parent
-                font.pixelSize: 15 * scaleFfactor
-                font.bold: true
-                font.family: "975Maru SC"
-                text: Math.round(control.progress)
-                color: control.progress <= 60 ? "#1afa29" : (control.progress <= 70 ? "#ff6d00" : "#E3170D")
-                horizontalAlignment: Text.AlignHCenter
-            }
+        Text {
+            id: txt_progress
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            font.pixelSize: 22 * scaleFfactor
+            font.bold: true
+            font.family: "monospace"
+            text: Math.round(memoryWatcher.memoryUsedPercent) + "%"
+            color: memoryWatcher.memoryUsedPercent <= 60 ? "#1afa29" : (memoryWatcher.memoryUsedPercent <= 70 ? "#ff6d00" : "#E3170D")
+            horizontalAlignment: Text.AlignHCenter
         }
     }
 }

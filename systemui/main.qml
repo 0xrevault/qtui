@@ -12,7 +12,9 @@ import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import QtQuick.Layouts 1.12
 import com.alientek.qmlcomponents 1.0
+
 Window {
+    id: window
     width: Screen.desktopAvailableWidth
     height: Screen.desktopAvailableHeight
     visible: true
@@ -20,7 +22,6 @@ Window {
     flags: Qt.FramelessWindowHint
     x: 0
     y: 0
-    id: window
 
     function translateText(text) {
         const translations = {
@@ -41,41 +42,40 @@ Window {
             "仪表盘": qsTr("仪表盘"),
             "仪表盘": qsTr("仪表盘"),
             "文件夹": qsTr("文件夹"),
-            "按键": qsTr("按键"),
+            "按键": qsTr("按键")
         };
         return translations[text] || text;
     }
 
-
     SystemUICommonApiServer {
         id: systemUICommonApiServer
-        onAppAsktoHideOrShow: function(action) {
+        onAppAsktoHideOrShow: function (action) {
             if (action === SystemUICommonApiServer.Hide) {
-                window.hide()
+                window.hide();
             }
             if (action === SystemUICommonApiServer.Show) {
-                window.show()
-                phonebg_scale.xScale = 1.0
-                window.requestActivate()
-                window.flags = Qt.FramelessWindowHint
-                systemUICommonApiServer.currtentLauchAppName = ""
+                window.show();
+                phonebg_scale.xScale = 1.0;
+                window.requestActivate();
+                window.flags = Qt.FramelessWindowHint;
+                systemUICommonApiServer.currtentLauchAppName = "";
             }
         }
         onCurrtentLauchAppNameChanged: {
             if (systemUICommonApiServer.currtentLauchAppName === "null")
-                systemUICommonApiServer.appAsktoHideOrShow(SystemUICommonApiServer.Show)
+                systemUICommonApiServer.appAsktoHideOrShow(SystemUICommonApiServer.Show);
         }
     }
 
     function launchActivity(name, x, y, item, iconPath, currtentPage, launchMode) {
-        window.flags = Qt.FramelessWindowHint |  Qt.WindowTransparentForInput
-        systemUICommonApiServer.launchProperties(x, y, item.width, item.height, iconPath, currtentPage, launchMode)
-        systemUICommonApiServer.launchApp(name)
+        window.flags = Qt.FramelessWindowHint | Qt.WindowTransparentForInput;
+        systemUICommonApiServer.launchProperties(x, y, item.width, item.height, iconPath, currtentPage, launchMode);
+        systemUICommonApiServer.launchApp(name);
     }
 
     Item {
-        anchors.fill: parent
         id: desktop
+        anchors.fill: parent
         Item {
             id: rootItem
             anchors.fill: parent
@@ -91,7 +91,12 @@ Window {
                     id: phonebg_scale
                     origin.x: phonebg.width / 2
                     origin.y: phonebg.height / 2
-                    Behavior on xScale { PropertyAnimation { duration: 50/*350*/; easing.type: Easing.Linear } }
+                    Behavior on xScale {
+                        PropertyAnimation {
+                            duration: 50/*350*/
+                            easing.type: Easing.Linear
+                        }
+                    }
                     xScale: 1.0
                     yScale: xScale
                 }
@@ -116,16 +121,16 @@ Window {
                     Page2 {}
                 }
                 Timer {
-                    repeat: false
                     id: indicatorShowTimer
+                    repeat: false
                     onTriggered: explainText.opacity = 1
                     interval: 1000
                 }
                 Connections {
                     target: main_swipeView
                     function onCurrentIndexChanged() {
-                        explainText.opacity = 0
-                        indicatorShowTimer.restart()
+                        explainText.opacity = 0;
+                        indicatorShowTimer.restart();
                     }
                 }
                 BottomApp {}
@@ -139,33 +144,37 @@ Window {
                     anchors.horizontalCenter: parent.horizontalCenter
                     delegate: indicator_delegate
                     Button {
+                        id: explainBt
                         width: 60 * scaleFfactor
                         height: 30 * scaleFfactor
                         anchors.centerIn: parent
-                        id: explainBt
                         opacity: explainBt.pressed ? 0.5 : 1.0
                         background: Rectangle {
                             color: "#44ffffff"
                             anchors.fill: parent
                             radius: height / 2
                             Text {
-                                Behavior on opacity { PropertyAnimation { duration: 500; easing.type: Easing.Linear } }
                                 id: explainText
+                                Behavior on opacity {
+                                    PropertyAnimation {
+                                        duration: 500
+                                        easing.type: Easing.Linear
+                                    }
+                                }
                                 opacity: 1
                                 text: qsTr("说明")
                                 color: "white"
                                 font.pixelSize: 12 * scaleFfactor
                                 anchors.centerIn: parent
-
                             }
                         }
                         onClicked: {
-                            dialog.width = window.width / 3 * 2
-                            dialog.height = window.height / 3 * 2
-                            dialog.x = (window.width - window.width / 3 * 2) / 2
-                            dialog.y = (window.height - window.height / 3 * 2) / 2
-                            dialog.open()
-                            instructionsFileRead.readInstructions()
+                            dialog.width = window.width / 3 * 2;
+                            dialog.height = window.height / 3 * 2;
+                            dialog.x = (window.width - window.width / 3 * 2) / 2;
+                            dialog.y = (window.height - window.height / 3 * 2) / 2;
+                            dialog.open();
+                            instructionsFileRead.readInstructions();
                         }
                     }
                     Component {
@@ -174,7 +183,7 @@ Window {
                             opacity: 1 - explainText.opacity
                             width: scaleFfactor * 6
                             height: scaleFfactor * 6
-                            color: main_swipeView.currentIndex !== index  ? "gray" : "#dddddd"
+                            color: main_swipeView.currentIndex !== index ? "gray" : "#dddddd"
                             radius: scaleFfactor * 3
                             anchors.verticalCenter: parent.verticalCenter
                         }
@@ -242,7 +251,7 @@ Window {
                 mColor: "#cccbc7"
                 mOpacity: 0.9
                 onOkSignal: {
-                    dialog.close()
+                    dialog.close();
                 }
             }
             Text {
@@ -261,7 +270,7 @@ Window {
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 80 * scaleFfactor
                 anchors.top: parent.top
-                anchors.topMargin: 50  * scaleFfactor
+                anchors.topMargin: 50 * scaleFfactor
                 clip: true
                 contentHeight: instructionsFileReadText.contentHeight + 10
                 ScrollBar.vertical: ScrollBar {
@@ -274,7 +283,7 @@ Window {
                     Component.onCompleted: {
                         scrollBar.active = true;
                     }
-                    contentItem: Rectangle{
+                    contentItem: Rectangle {
                         implicitWidth: scaleFfactor * 6
                         implicitHeight: scaleFfactor * 100
                         radius: scaleFfactor * 2
@@ -302,6 +311,33 @@ Window {
 
     MemoryWatcher {
         id: memoryWatcher
-        running: main_swipeView.currentIndex === 2
+        running: true
+    }
+
+    // Performance overlay - fixed at top-left
+    Rectangle {
+        id: perfOverlay
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.leftMargin: 10
+        anchors.topMargin: 10
+        color: "#88101010"
+        radius: 6
+        border.color: "#33ffffff"
+        border.width: 1
+        z: 1000
+        width: perfText.paintedWidth + 16
+        height: perfText.paintedHeight + 16
+        Text {
+            id: perfText
+            text: memoryWatcher.overlayText
+            color: "white"
+            font.family: "monospace"
+            font.pixelSize: 12 * scaleFfactor
+            wrapMode: Text.Wrap
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.margins: 8
+        }
     }
 }
