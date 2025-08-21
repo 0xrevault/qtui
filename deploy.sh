@@ -23,74 +23,34 @@ if [ ! -d "$LOCAL_UI_DIR" ]; then
     exit 1
 fi
 
-echo "[3/4] Recreating remote directory: $HOST:$REMOTE_UI_DIR"
-ssh "$HOST" "set -e; rm -rf '$REMOTE_UI_DIR'; mkdir -p '$REMOTE_UI_DIR'"
+echo "[3/4] Packaging local 'ui' into archive"
+ARCHIVE_PATH="$(mktemp -t ui-archive-XXXXXX.tar.gz)"
+# macOS xattrs guard (harmless on Linux)
+export COPYFILE_DISABLE=1
+# Create archive with deterministic order
+( cd "$SCRIPT_DIR" && LC_ALL=C tar -czf "$ARCHIVE_PATH" ui )
 
-echo "[4/4] Deploying 'ui' to $HOST:$REMOTE_UI_DIR"
-
-# Prefer rsync when available on both ends; fallback to tar-over-ssh
-if command -v rsync >/dev/null 2>&1 && ssh "$HOST" "command -v rsync >/dev/null 2>&1"; then
-    echo "Using rsync over SSH (--delete, preserve perms, times, compression)"
-    ssh "$HOST" "mkdir -p '$REMOTE_UI_DIR'"
-    rsync -az --delete -e "ssh" "$LOCAL_UI_DIR/" "$HOST:$REMOTE_UI_DIR/"
+echo "[4/4] Upload archive, verify checksum, and extract on remote"
+if command -v sha256sum >/dev/null 2>&1; then
+  LOCAL_SHA=$(sha256sum "$ARCHIVE_PATH" | awk '{print $1}')
 else
-    echo "rsync not available on local or remote; falling back to tar stream (binary-safe)"
-    # macOS: disable AppleDouble/extended attributes in tar (harmless on Linux)
-    export COPYFILE_DISABLE=1
-    (cd "$LOCAL_UI_DIR" && tar -cpf - .) | ssh "$HOST" "set -euo pipefail; tar -xpf - -C '$REMOTE_UI_DIR'"
+  LOCAL_SHA=$(shasum -a 256 "$ARCHIVE_PATH" | awk '{print $1}')
 fi
 
-# Verify core binary integrity if present
-if [ -x "$LOCAL_UI_DIR/systemui" ]; then
-    echo "Verifying checksum of 'systemui' binary..."
-    local_sha=$(shasum -a 256 "$LOCAL_UI_DIR/systemui" | awk '{print $1}')
-    remote_sha=$(ssh "$HOST" "sha256sum '$REMOTE_UI_DIR/systemui' 2>/dev/null || shasum -a 256 '$REMOTE_UI_DIR/systemui'" | awk '{print $1}')
-    if [ -z "${remote_sha:-}" ]; then
-        echo "Warning: sha256sum/shasum not found on remote, skipping checksum verification" >&2
-    else
-        if [ "$local_sha" != "$remote_sha" ]; then
-            echo "Error: Checksum mismatch for systemui (local=$local_sha, remote=$remote_sha)" >&2
-            exit 2
-        fi
-    fi
-    # Optional: ensure remote file is recognized as ELF
-    ssh "$HOST" "command -v file >/dev/null 2>&1 && file '$REMOTE_UI_DIR/systemui' || true"
-fi
+scp "$ARCHIVE_PATH" "$HOST:/tmp/ui_deploy.tar.gz"
+
+ssh "$HOST" "set -euo pipefail; \
+  FILE=/tmp/ui_deploy.tar.gz; \
+  # Compute remote sha256 (prefer sha256sum)
+  ACT=\"\$( (sha256sum \"$FILE\" 2>/dev/null || shasum -a 256 \"$FILE\") | awk '{print \$1}')\"; \
+  if [ -z \"$ACT\" ]; then echo 'Error: no sha256 tool on remote' >&2; exit 10; fi; \
+  if [ \"$ACT\" != \"$LOCAL_SHA\" ]; then echo \"Error: checksum mismatch (remote=$ACT, local=$LOCAL_SHA)\" >&2; exit 11; fi; \
+  rm -rf '$REMOTE_UI_DIR'; mkdir -p /opt; tar -xzf \"$FILE\" -C /opt; rm -f \"$FILE\"; \
+  if [ -f '$REMOTE_UI_DIR/systemui' ]; then chmod +x '$REMOTE_UI_DIR/systemui' || true; fi; \
+  true"
+
+rm -f "$ARCHIVE_PATH"
 
 echo "Deploy completed successfully."
-
-echo "[Post] Verifying all deployed files via SHA-256 checksums"
-
-# Create local manifest (relative paths, sorted)
-tmp_local_manifest="$(mktemp)"
-(
-  cd "$LOCAL_UI_DIR"
-  if command -v sha256sum >/dev/null 2>&1; then
-    LC_ALL=C find . -type f -print | LC_ALL=C sort | while IFS= read -r f; do sha256sum "$f"; done > "$tmp_local_manifest"
-  else
-    LC_ALL=C find . -type f -print | LC_ALL=C sort | while IFS= read -r f; do shasum -a 256 "$f"; done > "$tmp_local_manifest"
-  fi
-)
-
-# Create remote manifest with a single, simple command
-tmp_remote_manifest="$(mktemp)"
-ssh "$HOST" "set -e; cd '$REMOTE_UI_DIR'; if command -v sha256sum >/dev/null 2>&1; then LC_ALL=C find . -type f -print | LC_ALL=C sort | while IFS= read -r f; do sha256sum \"\$f\"; done; elif command -v shasum >/dev/null 2>&1; then LC_ALL=C find . -type f -print | LC_ALL=C sort | while IFS= read -r f; do shasum -a 256 \"\$f\"; done; else echo NO_SHA_TOOL; fi" > "$tmp_remote_manifest"
-
-if grep -q '^NO_SHA_TOOL$' "$tmp_remote_manifest"; then
-  echo "Error: Remote host lacks sha256sum/shasum; cannot verify all files." >&2
-  rm -f "$tmp_local_manifest" "$tmp_remote_manifest"
-  exit 5
-fi
-
-if ! diff -u "$tmp_local_manifest" "$tmp_remote_manifest" >/dev/null; then
-  echo "Error: SHA-256 mismatch detected between local and remote file trees." >&2
-  echo "Showing first 100 diff lines:" >&2
-  diff -u "$tmp_local_manifest" "$tmp_remote_manifest" | head -n 100 >&2 || true
-  rm -f "$tmp_local_manifest" "$tmp_remote_manifest"
-  exit 6
-fi
-
-rm -f "$tmp_local_manifest" "$tmp_remote_manifest"
-echo "All files verified (SHA-256) successfully."
 
 
