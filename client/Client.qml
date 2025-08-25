@@ -22,27 +22,29 @@ Item {
             if (cmd === SystemUICommonApiClient.Show) {
                 if (programmerName != "cube")
                     window.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint;
-                appMainBody.visible = true;
-                enterAnim.restart();
-                //if (systemUICommonApiClient.applicationAnimation)
+                // 延迟显示内容，避免冷启动白屏：先显示窗口但隐藏内容，稍后再显示并隐藏桌面
+                appMainBody.visible = false;
                 window.show();
                 window.requestActivate();
-                systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Hide);
-                //else
-                //delayToShowTimer.start()
+                delayToShowTimer.start();
             }
             if (cmd === SystemUICommonApiClient.Quit)
                 Qt.quit();
         }
     }
 
-    // Timer {
-    //     id: delayToShowTimer
-    //     interval: window.width > 1280 ? 50 : 150
-    //     repeat: false
-    //     running: false
-    //     onTriggered: { appMainBody.visible = true; window.requestActivate() }
-    // }
+    Timer {
+        id: delayToShowTimer
+        interval: window.width > 1280 ? 60 : 120
+        repeat: false
+        running: false
+        onTriggered: {
+            appMainBody.visible = true;
+            enterAnim.restart();
+            systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Hide);
+            window.requestActivate();
+        }
+    }
 
     AppMainBody {
         id: appMainBody

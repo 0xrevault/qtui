@@ -63,6 +63,14 @@ Window {
                 window.show();
                 window.requestActivate();
                 systemUICommonApiServer.currtentLauchAppName = "";
+                // Unlock reveal: expand desktop + dock softly to avoid abrupt show
+                control_item.opacity = 0.0;
+                control_item.scale = 0.94;
+                if (bottomApp) {
+                    bottomApp.opacity = 0.0;
+                    bottomApp.scale = 0.98;
+                }
+                unlockRevealAnim.restart();
             }
         }
         onCurrtentLauchAppNameChanged: {
@@ -72,6 +80,7 @@ Window {
     }
 
     function launchActivity(name, x, y, item, iconPath, currtentPage, launchMode) {
+        startLaunchAnimation(x, y, item.width, item.height, iconPath);
         window.flags = Qt.FramelessWindowHint | Qt.WindowTransparentForInput;
         systemUICommonApiServer.launchProperties(x, y, item.width, item.height, iconPath, currtentPage, launchMode);
         systemUICommonApiServer.launchApp(name);
@@ -125,14 +134,16 @@ Window {
                     Page2 {}
                 }
                 // Removed explain button/timer; keep a simple page indicator
-                BottomApp {}
+                BottomApp {
+                    id: bottomApp
+                }
                 PageIndicator {
                     id: indicator
                     count: main_swipeView.count
                     visible: main_swipeView.currentIndex !== 0
                     currentIndex: main_swipeView.currentIndex
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: scaleFfactor * 110
+                    anchors.bottom: bottomApp.top
+                    anchors.bottomMargin: scaleFfactor * 20
                     anchors.horizontalCenter: parent.horizontalCenter
                     delegate: indicator_delegate
                     Component {
@@ -228,5 +239,120 @@ Window {
             anchors.top: parent.top
             anchors.margins: 8
         }
+    }
+
+    // Unlock reveal animation (desktop + dock)
+    ParallelAnimation {
+        id: unlockRevealAnim
+        NumberAnimation {
+            target: control_item
+            property: "opacity"
+            from: 0.0
+            to: 1.0
+            duration: 200
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: control_item
+            property: "scale"
+            from: 0.94
+            to: 1.0
+            duration: 240
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: bottomApp
+            property: "opacity"
+            from: 0.0
+            to: 1.0
+            duration: 220
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: bottomApp
+            property: "scale"
+            from: 0.98
+            to: 1.0
+            duration: 240
+            easing.type: Easing.OutCubic
+        }
+    }
+
+    // iOS-like launch animation overlay
+    Item {
+        id: launchOverlay
+        anchors.fill: parent
+        visible: false
+        z: 2000
+        property real targetW: Math.min(window.width, window.height) * 0.6
+        property real targetH: targetW
+        function reset(x, y, w, h, src) {
+            launchIcon.x = x;
+            launchIcon.y = y;
+            launchIcon.width = w;
+            launchIcon.height = h;
+            launchIcon.source = src;
+        }
+
+        Image {
+            id: launchIcon
+            fillMode: Image.PreserveAspectFit
+            smooth: true
+            source: ""
+        }
+
+        ParallelAnimation {
+            id: zoomInAnim
+            NumberAnimation {
+                target: launchIcon
+                property: "x"
+                to: (window.width - launchOverlay.targetW) / 2
+                duration: 220
+                easing.type: Easing.OutCubic
+            }
+            NumberAnimation {
+                target: launchIcon
+                property: "y"
+                to: (window.height - launchOverlay.targetH) / 2
+                duration: 220
+                easing.type: Easing.OutCubic
+            }
+            NumberAnimation {
+                target: launchIcon
+                property: "width"
+                to: launchOverlay.targetW
+                duration: 220
+                easing.type: Easing.OutCubic
+            }
+            NumberAnimation {
+                target: launchIcon
+                property: "height"
+                to: launchOverlay.targetH
+                duration: 220
+                easing.type: Easing.OutCubic
+            }
+            onStopped: fadeOutAnim.start()
+        }
+
+        NumberAnimation {
+            id: fadeOutAnim
+            target: launchOverlay
+            property: "opacity"
+            from: 1.0
+            to: 0.0
+            duration: 120
+            easing.type: Easing.InOutQuad
+            onStopped: {
+                launchOverlay.visible = false;
+                launchOverlay.opacity = 1.0;
+            }
+        }
+    }
+
+    function startLaunchAnimation(x, y, w, h, iconPath) {
+        launchOverlay.visible = true;
+        launchOverlay.opacity = 1.0;
+        launchOverlay.reset(x, y, w, h, iconPath);
+        zoomInAnim.restart();
     }
 }
