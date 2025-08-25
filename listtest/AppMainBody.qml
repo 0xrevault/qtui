@@ -58,7 +58,6 @@ Item {
         clip: true
         cacheBuffer: height * 4
         boundsBehavior: Flickable.DragOverBounds
-        reuseItems: true
         delegate: ItemDelegate {
             width: ListView.view.width
             height: itemHeight

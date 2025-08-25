@@ -107,6 +107,8 @@ ui/src/apps/pose_keypoint
 ui/src/apps/video
 ui/src/apps/hdplayer
 ui/src/apps/cube
+ui/src/apps/listtest
+listtest/listtest
 controlcenter/controlcenter
 lockscreenservice/lockscreenservice
 pose_keypoint/pose_keypoint
