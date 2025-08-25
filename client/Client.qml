@@ -9,6 +9,7 @@ Copyright © Deng Zhimao Co., Ltd. 2021-2030. All rights reserved.
 import QtQuick 2.0
 import com.alientek.qmlcomponents 1.0
 import QtQuick.Controls 2.12
+
 Item {
     id: client
     property real scaleFactor: client.width / 1024
@@ -20,17 +21,18 @@ Item {
         onActionCommand: {
             if (cmd === SystemUICommonApiClient.Show) {
                 if (programmerName != "cube")
-                    window.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
-                appMainBody.visible = true
+                    window.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint;
+                appMainBody.visible = true;
+                enterAnim.restart();
                 //if (systemUICommonApiClient.applicationAnimation)
-                window.show()
-                window.requestActivate()
-                systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Hide)
+                window.show();
+                window.requestActivate();
+                systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Hide);
                 //else
                 //delayToShowTimer.start()
             }
             if (cmd === SystemUICommonApiClient.Quit)
-                Qt.quit()
+                Qt.quit();
         }
     }
 
@@ -42,10 +44,9 @@ Item {
     //     onTriggered: { appMainBody.visible = true; window.requestActivate() }
     // }
 
-
     AppMainBody {
-        anchors.fill: parent
         id: appMainBody
+        anchors.fill: parent
         visible: true
     }
 
@@ -57,21 +58,32 @@ Item {
         onTriggered: Qt.quit()
     }
 
+    NumberAnimation {
+        id: enterAnim
+        target: appMainBody
+        property: "scale"
+        from: 0.94
+        to: 1.0
+        duration: 180
+        easing.type: Easing.OutCubic
+        running: false
+    }
+
     RoundButton {
-        visible: true
         id: backBtn
+        visible: true
         x: parent.x + parent.width - 100 * scaleFactor
         y: parent.y + parent.height / 2 - 100 * scaleFactor
         width: 100 * scaleFactor
         height: width
         hoverEnabled: enabled
         opacity: mouseArea.pressed ? 1.0 : 0.5
-        background: Rectangle{
+        background: Rectangle {
             color: "#88101010"
             radius: parent.width / 2
         }
 
-        Rectangle{
+        Rectangle {
             anchors.centerIn: parent
             width: 90 * scaleFactor
             height: width
@@ -79,7 +91,7 @@ Item {
             radius: parent.width / 2
         }
 
-        Rectangle{
+        Rectangle {
             anchors.centerIn: parent
             width: 80 * scaleFactor
             height: width
@@ -87,7 +99,7 @@ Item {
             radius: parent.width / 2
         }
 
-        Rectangle{
+        Rectangle {
             anchors.centerIn: parent
             width: 70 * scaleFactor
             height: width
@@ -103,22 +115,36 @@ Item {
             drag.maximumX: client.width - 100 * scaleFactor
             drag.maximumY: client.height - 100 * scaleFactor
             onClicked: {
-                window.flags = Qt.FramelessWindowHint |  Qt.WindowTransparentForInput | Qt.WindowStaysOnTopHint
+                window.flags = Qt.FramelessWindowHint | Qt.WindowTransparentForInput | Qt.WindowStaysOnTopHint;
                 if (!systemUICommonApiClient.backgroundTask) {
-                    //Qt.quit()
-                    systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Show)
-                    delayToQuitTimer.start()
+                    // slide-up then quit
+                    exitAnim.restart();
+                    systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Show);
+                    delayToQuitTimer.start();
                 } else {
-                    systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Show)
-                    appMainBody.visible = false
-                    window.hide()
+                    systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Show);
+                    appMainBody.visible = false;
+                    window.hide();
                 }
             }
 
             onPressAndHold: {
-                systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Show)
-                delayToQuitTimer.start()
+                systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Show);
+                delayToQuitTimer.start();
             }
+        }
+    }
+    NumberAnimation {
+        id: exitAnim
+        target: appMainBody
+        property: "y"
+        from: 0
+        to: -client.height * 0.04
+        duration: 150
+        easing.type: Easing.InCubic
+        running: false
+        onStopped: {
+            appMainBody.y = 0;
         }
     }
     Component.onCompleted: systemUICommonApiClient.onSystemuiconfChanged()

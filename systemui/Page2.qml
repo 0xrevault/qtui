@@ -34,8 +34,8 @@ Item {
             interactive: false
             clip: false
             snapMode: ListView.SnapOneItem
-            cellWidth: item_gridView.width / 6
-            cellHeight: cellWidth * 1.2
+            cellWidth: item_gridView.width / 4
+            cellHeight: cellWidth * 1.3
             model: apkListModel
             delegate: item_gridView_delegate
         }
@@ -55,7 +55,7 @@ Item {
             background: Image {
                 id: appIcon
                 anchors.centerIn: parent
-                width: window.width / 12
+                width: window.width / 8
                 height: width
                 source: apkIconPath
                 visible: systemUICommonApiServer.currtentLauchAppName !== programName
@@ -72,11 +72,11 @@ Item {
 
             Text {
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: window.width / 720 * 15
+                anchors.bottomMargin: window.width / 720 * 18
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: translateText(apkName)
                 color: "white"
-                font.pixelSize: window.width / 720 * 15
+                font.pixelSize: window.width / 720 * 22
                 font.bold: true
             }
 

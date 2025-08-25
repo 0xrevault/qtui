@@ -3,7 +3,7 @@ import QtQuick.Controls 2.12
 
 Item {
     anchors.fill: parent
-    property int itemHeight: Math.max(40, width / 18)
+    property int itemHeight: Math.max(56, width / 14)
     property int batchSize: 200
     property int maxItems: 100000000
     property int loadedCount: 0
@@ -62,7 +62,7 @@ Item {
             width: ListView.view.width
             height: itemHeight
             text: title
-            font.pixelSize: Math.max(14, width / 40)
+            font.pixelSize: Math.max(20, width / 32)
             contentItem: Row {
                 spacing: 12
                 anchors.verticalCenter: parent.verticalCenter
@@ -79,11 +79,13 @@ Item {
                     Text {
                         text: title
                         font.bold: true
+                        font.pixelSize: Math.max(20, width / 32)
                     }
                     Text {
                         text: subtitle
                         color: "#666666"
                         elide: Text.ElideRight
+                        font.pixelSize: Math.max(16, width / 36)
                     }
                 }
             }

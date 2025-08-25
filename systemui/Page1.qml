@@ -11,11 +11,12 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import com.alientek.qmlcomponents 1.0
+
 Item {
     id: page1
     ApkListModel {
         id: apkListModel
-        Component.onCompleted: apkListModel.add(appCurrtentDir + "/src/"+ hostName +"/apk1.cfg")
+        Component.onCompleted: apkListModel.add(appCurrtentDir + "/src/" + hostName + "/apk1.cfg")
     }
 
     ColumnLayout {
@@ -25,17 +26,17 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 30
         GridView {
+            id: item_gridView
             Layout.alignment: Qt.AlignHCenter
             Layout.fillHeight: true
             width: control_item.width - control_item.width / 13
             height: control_item.width / 4 * 3  // three column
-            id: item_gridView
             visible: true
             interactive: false
             clip: false
             snapMode: ListView.SnapOneItem
-            cellWidth: item_gridView.width / 6
-            cellHeight: cellWidth * 1.2
+            cellWidth: item_gridView.width / 4
+            cellHeight: cellWidth * 1.3
             model: apkListModel
             delegate: item_gridView_delegate
         }
@@ -49,14 +50,13 @@ Item {
             height: item_gridView.cellHeight
             enabled: installed
             onClicked: {
-                launchActivity(programName, mapToGlobal(appIcon.x, appIcon.y).x, mapToGlobal(appIcon.x, appIcon.y).y,
-                        appIcon, apkIconPath, main_swipeView.currentIndex, SystemUICommonApiServer.ClickIcon)
+                launchActivity(programName, mapToGlobal(appIcon.x, appIcon.y).x, mapToGlobal(appIcon.x, appIcon.y).y, appIcon, apkIconPath, main_swipeView.currentIndex, SystemUICommonApiServer.ClickIcon);
             }
 
             background: Image {
                 id: appIcon
                 anchors.centerIn: parent
-                width: window.width / 12
+                width: window.width / 8
                 height: width
                 source: apkIconPath
                 visible: systemUICommonApiServer.currtentLauchAppName !== programName
@@ -73,11 +73,11 @@ Item {
 
             Text {
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: window.width / 720 * 15
+                anchors.bottomMargin: window.width / 720 * 18
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: translateText(apkName)
                 color: "white"
-                font.pixelSize: window.width / 720 * 15
+                font.pixelSize: window.width / 720 * 22
                 font.bold: true
             }
 

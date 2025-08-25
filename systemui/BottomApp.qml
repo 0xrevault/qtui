@@ -54,7 +54,7 @@ Item {
     Item {
         id: bottom_appItem_parent
         width: item_listView.contentWidth
-        height: control_item.width / 12 * 1.5
+        height: control_item.width / 8 * 1.5
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 20
@@ -63,7 +63,7 @@ Item {
             id: item_listView
             visible: true
             anchors.centerIn: parent
-            height: control_item.width / 12 * 1.5
+            height: control_item.width / 8 * 1.5
             width: item_listView.contentWidth
             interactive: false
             orientation: ListView.Horizontal
@@ -80,7 +80,7 @@ Item {
         id: item_listView_delegate
         Button {
             id: appButton
-            width: control_item.width / 8
+            width: control_item.width / 6
             height: width
             enabled: installed
             onClicked: {
@@ -89,7 +89,7 @@ Item {
             background: Image {
                 id: appIcon
                 anchors.centerIn: parent
-                width: control_item.width / 12
+                width: control_item.width / 8
                 height: width
                 source: apkIconPath
                 visible: systemUICommonApiServer.currtentLauchAppName !== programName
