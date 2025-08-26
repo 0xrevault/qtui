@@ -58,7 +58,13 @@ Item {
         model: listModel
         clip: true
         cacheBuffer: height * 4
-        boundsBehavior: Flickable.DragOverBounds
+        boundsBehavior: Flickable.StopAtBounds
+        interactive: true
+        pressDelay: 0
+        // Make drag start faster and feel more direct
+        dragThreshold: 4
+        maximumFlickVelocity: 4000
+        flickDeceleration: 6000
         delegate: ItemDelegate {
             width: ListView.view.width
             height: itemHeight

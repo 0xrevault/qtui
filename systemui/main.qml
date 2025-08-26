@@ -132,6 +132,22 @@ Window {
                     currentIndex: 1
                     clip: true
                     orientation: Qt.Horizontal
+                    interactive: true
+
+                    // Make swiping feel more direct on Qt 5 (tune underlying ListView)
+                    Component.onCompleted: {
+                        var lv = main_swipeView.contentItem; // ListView
+                        if (lv) {
+                            lv.pressDelay = 0;
+                            lv.highlightMoveDuration = 120; // short snap after release
+                            lv.snapMode = ListView.SnapOneItem;
+                            lv.preferredHighlightBegin = 0;
+                            lv.preferredHighlightEnd = width;
+                            lv.highlightRangeMode = ListView.StrictlyEnforceRange;
+                            lv.flickDeceleration = 6000; // faster tracking stop
+                            lv.maximumFlickVelocity = 3500; // allow faster finger drags
+                        }
+                    }
                     Widgets {}
                     Page1 {}
                     Page2 {}
