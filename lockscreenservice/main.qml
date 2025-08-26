@@ -28,14 +28,15 @@ Window {
     Flickable {
         id: flk
         anchors.fill: parent
+        clip: true
         contentWidth: width
         contentHeight: height * 2
         contentY: 0
         pressDelay: 0
         interactive: true
         flickableDirection: Flickable.VerticalFlick
-        maximumFlickVelocity: 8000
-        flickDeceleration: 3800
+        maximumFlickVelocity: 9000
+        flickDeceleration: 3600
         boundsBehavior: Flickable.StopAtBounds
 
         Item {
@@ -52,6 +53,8 @@ Window {
                 smooth: true
                 asynchronous: true
                 cache: true
+                sourceSize.width: width
+                sourceSize.height: height
                 source: "file://" + appCurrtentDir + "/src/ipad/ipad/ipad.jpg"
             }
 
