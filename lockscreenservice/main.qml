@@ -37,7 +37,14 @@ Window {
         sourceSize.width: width
         sourceSize.height: height
         source: "file://" + appCurrtentDir + "/src/ipad/ipad/ipad.jpg"
-        visible: false
+        visible: true
+    }
+
+    ShaderEffectSource {
+        id: lockSrc
+        sourceItem: lockBg
+        hideSource: true
+        live: true
     }
 
     Rectangle {
@@ -53,7 +60,7 @@ Window {
     OpacityMask {
         id: maskedBg
         anchors.fill: parent
-        source: lockBg
+        source: lockSrc
         maskSource: maskRect
         z: 0
     }
