@@ -14,7 +14,9 @@ import com.alientek.qmlcomponents 1.0
 
 Item {
     id: page1
-    anchors.fill: parent
+    // Do not anchor root to parent; allow SwipeView to position pages by x
+    width: parent ? parent.width : 0
+    height: parent ? parent.height : 0
     layer.enabled: true
     layer.smooth: true
     ApkListModel {
