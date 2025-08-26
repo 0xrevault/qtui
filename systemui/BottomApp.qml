@@ -127,7 +127,8 @@ Item {
                 anchors.fill: appIcon2
                 active: appButton.pressed
                 sourceComponent: Colorize {
-                    anchors.fill: appIcon2
+                    // Fill the Loader itself; appIcon2 is not a sibling here
+                    anchors.fill: parent
                     source: appIcon2
                     saturation: 0.0
                     lightness: -1.0

@@ -7,6 +7,7 @@ Copyright © Deng Zhimao Co., Ltd. 2021-2030. All rights reserved.
 * @link          http://www.openedv.com/forum.php
 *******************************************************************/
 import QtQuick 2.0
+import QtQuick.Window 2.12
 import com.alientek.qmlcomponents 1.0
 import QtQuick.Controls 2.12
 
@@ -21,11 +22,11 @@ Item {
         onActionCommand: {
             if (cmd === SystemUICommonApiClient.Show) {
                 if (programmerName != "cube")
-                    window.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint;
+                    Window.window.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint;
                 // 延迟显示内容，避免冷启动白屏：先显示窗口但隐藏内容，稍后再显示并隐藏桌面
                 appMainBody.visible = false;
-                window.show();
-                window.requestActivate();
+                Window.window.show();
+                Window.window.requestActivate();
                 delayToShowTimer.start();
             }
             if (cmd === SystemUICommonApiClient.Quit)
@@ -42,7 +43,7 @@ Item {
             appMainBody.visible = true;
             enterAnim.restart();
             systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Hide);
-            window.requestActivate();
+            Window.window.requestActivate();
         }
     }
 
@@ -117,7 +118,7 @@ Item {
             drag.maximumX: client.width - 100 * scaleFactor
             drag.maximumY: client.height - 100 * scaleFactor
             onClicked: {
-                window.flags = Qt.FramelessWindowHint | Qt.WindowTransparentForInput | Qt.WindowStaysOnTopHint;
+                Window.window.flags = Qt.FramelessWindowHint | Qt.WindowTransparentForInput | Qt.WindowStaysOnTopHint;
                 if (!systemUICommonApiClient.backgroundTask) {
                     // slide-up then quit
                     exitAnim.restart();
@@ -126,7 +127,7 @@ Item {
                 } else {
                     systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Show);
                     appMainBody.visible = false;
-                    window.hide();
+                    Window.window.hide();
                 }
             }
 

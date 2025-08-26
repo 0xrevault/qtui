@@ -61,8 +61,6 @@ Item {
         boundsBehavior: Flickable.StopAtBounds
         interactive: true
         pressDelay: 0
-        // Make drag start faster and feel more direct
-        dragThreshold: 4
         maximumFlickVelocity: 4000
         flickDeceleration: 6000
         delegate: ItemDelegate {
