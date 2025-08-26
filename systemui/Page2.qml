@@ -14,9 +14,9 @@ import com.alientek.qmlcomponents 1.0
 
 Item {
     id: page2
+    anchors.fill: parent
     layer.enabled: true
     layer.smooth: true
-    layer.mipmaps: true
     ApkListModel {
         id: apkListModel
         Component.onCompleted: apkListModel.add(appCurrtentDir + "/src/" + hostName + "/apk2.cfg")
@@ -35,7 +35,7 @@ Item {
             height: control_item.width / 4 * 5  // three column
             visible: true
             interactive: false
-            clip: false
+            clip: true
             snapMode: ListView.SnapOneItem
             cellWidth: item_gridView.width / 4
             cellHeight: cellWidth * 1.3
