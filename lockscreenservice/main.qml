@@ -35,7 +35,10 @@ Window {
         clip: true
         z: 0
         Image {
-            anchors.fill: parent
+            anchors.top: parent.top
+            anchors.left: parent.left
+            width: window.width
+            height: window.height
             fillMode: Image.PreserveAspectCrop
             smooth: true
             asynchronous: false
@@ -137,7 +140,7 @@ Window {
         appName: "lockscreenservice"
         onActionCommand: {
             if (cmd === SystemUICommonApiClient.Show) {
-                window.flags = Qt.FramelessWindowHint;
+                window.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint;
                 window.show();
                 window.requestActivate();
                 flk.contentY = 0;
