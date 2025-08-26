@@ -7,6 +7,7 @@ Copyright © Deng Zhimao Co., Ltd. 2021-2030. All rights reserved.
 * @link          http://www.alientek.com
 *******************************************************************/
 import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 Item {
     width: SwipeView.view ? SwipeView.view.width : (parent ? parent.width : 0)
