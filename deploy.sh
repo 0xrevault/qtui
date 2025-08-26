@@ -11,26 +11,21 @@ REMOTE_UI_DIR="/opt/ui"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-echo "[1/4] Cleaning previous build artifacts"
-bash ./build.sh cleanall
-
-echo "[2/4] Building all projects"
-bash ./build.sh all
-
+echo "[1/3] Packaging local 'ui' into archive"
 LOCAL_UI_DIR="$SCRIPT_DIR/ui"
 if [ ! -d "$LOCAL_UI_DIR" ]; then
     echo "Error: Local 'ui' directory not found at: $LOCAL_UI_DIR" >&2
+    echo "Tip: Run ./build_ui.sh first."
     exit 1
 fi
 
-echo "[3/4] Packaging local 'ui' into archive"
 ARCHIVE_PATH="$(mktemp -t ui-archive-XXXXXX.tar.gz)"
 # macOS xattrs guard (harmless on Linux)
 export COPYFILE_DISABLE=1
 # Create archive with deterministic order
 ( cd "$SCRIPT_DIR" && LC_ALL=C tar -czf "$ARCHIVE_PATH" ui )
 
-echo "[4/4] Upload archive, verify checksum, and extract on remote"
+echo "[2/3] Upload archive, verify checksum, and extract on remote"
 if command -v sha256sum >/dev/null 2>&1; then
   LOCAL_SHA=$(sha256sum "$ARCHIVE_PATH" | awk '{print $1}')
 else
@@ -65,6 +60,6 @@ ssh "$HOST" "set -e; sync"
 
 rm -f "$ARCHIVE_PATH"
 
-echo "Deploy completed successfully."
+echo "[3/3] Deploy completed successfully."
 
 
