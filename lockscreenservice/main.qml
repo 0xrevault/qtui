@@ -67,15 +67,17 @@ Window {
         pressDelay: 0
         interactive: true
         flickableDirection: Flickable.VerticalFlick
-        maximumFlickVelocity: 9000
-        flickDeceleration: 3600
+        maximumFlickVelocity: 10000
+        flickDeceleration: 3400
         boundsBehavior: Flickable.StopAtBounds
         z: 1
+        // Do not animate contentY during drag; only animate bounce-back on release
 
         Item {
             id: contentRoot
             width: flk.width
             height: flk.contentHeight
+            opacity: 1 - flk.contentY / flk.height
 
             // 占位以便内容可上滑到整屏高度
             Item {
@@ -86,12 +88,11 @@ Window {
 
             Text {
                 id: lockText
-                opacity: 1 - flk.contentY / flk.height
                 y: flk.height - 50 * scaleFacter - opacity * 10
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("向上轻扫以解锁")
                 color: "white"
-                font.pixelSize: 25 * scaleFacter
+                font.pixelSize: 30 * scaleFacter
                 renderType: Text.NativeRendering
             }
 
@@ -104,7 +105,7 @@ Window {
                 anchors.topMargin: 50 * scaleFacter
                 text: systemTime.system_time
                 color: "white"
-                font.pixelSize: 80 * scaleFacter
+                font.pixelSize: 100 * scaleFacter
                 renderType: Text.NativeRendering
             }
 
@@ -115,7 +116,7 @@ Window {
                 anchors.topMargin: 10
                 text: systemTime.system_date2 + " " + systemTime.system_week
                 color: "white"
-                font.pixelSize: 30 * scaleFacter
+                font.pixelSize: 36 * scaleFacter
                 renderType: Text.NativeRendering
             }
         }
@@ -129,9 +130,18 @@ Window {
             }
         }
         onMovementEnded: {
-            if (!flk.unlocked) {
-                contentY = contentY >= flk.height / 2 ? flk.height : 0;
+            if (!flk.unlocked && contentY < flk.height / 2) {
+                returnAnim.to = 0;
+                returnAnim.start();
             }
+        }
+
+        NumberAnimation {
+            id: returnAnim
+            target: flk
+            property: "contentY"
+            duration: 200
+            easing.type: Easing.OutCubic
         }
     }
 
