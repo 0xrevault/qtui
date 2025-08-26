@@ -15,7 +15,8 @@ import com.alientek.qmlcomponents 1.0
 Item {
     id: page1
     anchors.fill: parent
-    // Removed layer.enabled/layer.smooth to avoid rendering glitches on device
+    layer.enabled: true
+    layer.smooth: true
     ApkListModel {
         id: apkListModel
         Component.onCompleted: apkListModel.add(appCurrtentDir + "/src/" + hostName + "/apk1.cfg")
@@ -61,6 +62,10 @@ Item {
                 width: window.width / 8
                 height: width
                 source: apkIconPath
+                asynchronous: true
+                cache: true
+                sourceSize.width: width
+                sourceSize.height: height
 
                 visible: systemUICommonApiServer.currtentLauchAppName !== programName
             }
@@ -71,6 +76,10 @@ Item {
                 width: appIcon.width
                 height: width
                 source: apkIconPath
+                asynchronous: true
+                cache: true
+                sourceSize.width: width
+                sourceSize.height: height
 
                 visible: systemUICommonApiServer.coldLaunch
             }
@@ -85,15 +94,18 @@ Item {
                 font.bold: true
             }
 
-            Colorize {
-                id: colorize1
+            Loader {
+                id: pressedFx
                 anchors.fill: appIcon2
-                source: appIcon2
-                saturation: 0.0
-                lightness: -1.0
-                opacity: 0.2
-                cached: true
-                visible: appButton.pressed
+                active: appButton.pressed
+                sourceComponent: Colorize {
+                    anchors.fill: appIcon2
+                    source: appIcon2
+                    saturation: 0.0
+                    lightness: -1.0
+                    opacity: 0.2
+                    cached: true
+                }
             }
         }
     }

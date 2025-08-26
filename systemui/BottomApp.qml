@@ -18,13 +18,17 @@ Item {
         id: apkListModel
         Component.onCompleted: apkListModel.add(appCurrtentDir + "/src/" + hostName + "/apk3.cfg")
     }
-    FuzzPanel {
-        id: fuzzPanel
-        anchors.centerIn: bottom_appItem_parent
-        width: bottom_appItem_parent.width
-        height: bottom_appItem_parent.height
-        target: phonebg
-        visible: false
+    Loader {
+        id: fuzzPanelLoader
+        active: false
+        sourceComponent: FuzzPanel {
+            id: fuzzPanel
+            anchors.centerIn: bottom_appItem_parent
+            width: bottom_appItem_parent.width
+            height: bottom_appItem_parent.height
+            target: phonebg
+            visible: true
+        }
     }
 
     Rectangle {
@@ -36,10 +40,14 @@ Item {
         visible: false
     }
 
-    OpacityMask {
-        anchors.fill: fuzzPanel
-        source: fuzzPanel
-        maskSource: bottom_app_rect_mask
+    Loader {
+        id: maskLoader
+        active: fuzzPanelLoader.active
+        sourceComponent: OpacityMask {
+            anchors.fill: fuzzPanel
+            source: fuzzPanel
+            maskSource: bottom_app_rect_mask
+        }
     }
 
     Rectangle {
@@ -92,6 +100,10 @@ Item {
                 width: control_item.width / 8
                 height: width
                 source: apkIconPath
+                asynchronous: true
+                cache: true
+                sourceSize.width: width
+                sourceSize.height: height
 
                 visible: systemUICommonApiServer.currtentLauchAppName !== programName
             }
@@ -102,19 +114,26 @@ Item {
                 width: appIcon.width
                 height: width
                 source: apkIconPath
+                asynchronous: true
+                cache: true
+                sourceSize.width: width
+                sourceSize.height: height
 
                 visible: systemUICommonApiServer.coldLaunch
             }
 
-            Colorize {
-                id: colorize1
+            Loader {
+                id: pressedFx
                 anchors.fill: appIcon2
-                source: appIcon2
-                saturation: 0.0
-                lightness: -1.0
-                opacity: 0.2
-                cached: true
-                visible: appButton.pressed
+                active: appButton.pressed
+                sourceComponent: Colorize {
+                    anchors.fill: appIcon2
+                    source: appIcon2
+                    saturation: 0.0
+                    lightness: -1.0
+                    opacity: 0.2
+                    cached: true
+                }
             }
         }
     }
