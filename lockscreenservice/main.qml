@@ -26,43 +26,24 @@ Window {
         id: systemTime
     }
 
-    // Lock background fixed, reveal underlying desktop as mask shrinks
-    Image {
-        id: lockBg
-        anchors.fill: parent
-        fillMode: Image.PreserveAspectCrop
-        smooth: true
-        asynchronous: false
-        cache: true
-        sourceSize.width: width
-        sourceSize.height: height
-        source: "file://" + appCurrtentDir + "/src/ipad/ipad/ipad.jpg"
-        visible: true
-    }
-
-    ShaderEffectSource {
-        id: lockSrc
-        sourceItem: lockBg
-        hideSource: true
-        live: true
-    }
-
-    Rectangle {
-        id: maskRect
+    // Lock background fixed as a top cover; height shrinks with drag to reveal desktop
+    Item {
+        id: lockCover
         anchors.top: parent.top
-        anchors.left: parent.left
         width: parent.width
         height: Math.max(0, parent.height - flk.contentY)
-        color: "white"
+        clip: true
         z: 0
-    }
-
-    OpacityMask {
-        id: maskedBg
-        anchors.fill: parent
-        source: lockSrc
-        maskSource: maskRect
-        z: 0
+        Image {
+            anchors.fill: parent
+            fillMode: Image.PreserveAspectCrop
+            smooth: true
+            asynchronous: false
+            cache: true
+            sourceSize.width: width
+            sourceSize.height: height
+            source: "file://" + appCurrtentDir + "/src/ipad/ipad/lockscreen.jpg"
+        }
     }
 
     Flickable {
