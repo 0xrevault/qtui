@@ -57,10 +57,11 @@ Item {
         anchors.fill: parent
         model: listModel
         clip: true
-        cacheBuffer: height * 20
+        cacheBuffer: height * 40
         boundsBehavior: Flickable.StopAtBounds
         interactive: true
         pressDelay: 0
+        dragThreshold: 0
         maximumFlickVelocity: 9000
         flickDeceleration: 3500
         delegate: Item {
