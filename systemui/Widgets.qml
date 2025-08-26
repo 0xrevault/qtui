@@ -9,9 +9,7 @@ Copyright © Deng Zhimao Co., Ltd. 2021-2030. All rights reserved.
 import QtQuick 2.12
 
 Item {
-    // Match SwipeView page size; avoid anchors to let SwipeView position pages
-    width: parent ? parent.width : 0
-    height: parent ? parent.height : 0
+    anchors.fill: parent
     Text {
         id: time
         anchors.top: parent.top

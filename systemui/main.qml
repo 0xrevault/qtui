@@ -129,6 +129,7 @@ Window {
                     anchors.fill: parent
                     currentIndex: 1
                     clip: true
+                    orientation: Qt.Horizontal
                     Widgets {}
                     Page1 {}
                     Page2 {}

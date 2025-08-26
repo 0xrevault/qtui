@@ -14,9 +14,7 @@ import com.alientek.qmlcomponents 1.0
 
 Item {
     id: page2
-    // Do not anchor root to parent; allow SwipeView to position pages by x
-    width: parent ? parent.width : 0
-    height: parent ? parent.height : 0
+    // Let SwipeView size and position this page; avoid anchors on the root item
     layer.enabled: true
     layer.smooth: true
     ApkListModel {
