@@ -8,7 +8,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-echo "[0/5] Updating repository from origin/main"
+echo "[0/6] Updating repository from origin/main"
 if command -v git >/dev/null 2>&1; then
   git pull --rebase origin main
 else
@@ -16,13 +16,13 @@ else
   exit 3
 fi
 
-echo "[1/5] Cleaning previous build artifacts"
+echo "[1/6] Cleaning previous build artifacts"
 bash ./build.sh cleanall
 
-echo "[2/5] Building all projects"
+echo "[2/6] Building all projects"
 bash ./build.sh all
 
-echo "[3/5] Creating ui.zip"
+echo "[3/6] Creating ui.zip"
 ARCHIVE_PATH="${SCRIPT_DIR}/ui.zip"
 rm -f "$ARCHIVE_PATH"
 
@@ -34,7 +34,7 @@ else
   exit 2
 fi
 
-echo "[4/5] Committing ui.zip to git"
+echo "[4/6] Committing ui.zip to git"
 HASH=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 git add -f "$ARCHIVE_PATH"
 if git diff --cached --quiet; then
@@ -43,6 +43,10 @@ else
   git commit -m "build(ui): ui.zip @ ${HASH}"
 fi
 
-echo "[5/5] Build complete: ${ARCHIVE_PATH}"
+echo "[5/6] Pushing commit to origin/main"
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+git push origin "$CURRENT_BRANCH" || echo "Warning: git push failed. Please check your network/credentials." >&2
+
+echo "[6/6] Build complete: ${ARCHIVE_PATH}"
 
 
