@@ -18,17 +18,13 @@ Item {
         id: apkListModel
         Component.onCompleted: apkListModel.add(appCurrtentDir + "/src/" + hostName + "/apk3.cfg")
     }
-    Loader {
-        id: fuzzPanelLoader
-        active: false
-        sourceComponent: FuzzPanel {
-            id: fuzzPanel
-            anchors.centerIn: bottom_appItem_parent
-            width: bottom_appItem_parent.width
-            height: bottom_appItem_parent.height
-            target: phonebg
-            visible: true
-        }
+    FuzzPanel {
+        id: fuzzPanel
+        anchors.centerIn: bottom_appItem_parent
+        width: bottom_appItem_parent.width
+        height: bottom_appItem_parent.height
+        target: phonebg
+        visible: false
     }
 
     Rectangle {
@@ -40,14 +36,10 @@ Item {
         visible: false
     }
 
-    Loader {
-        id: maskLoader
-        active: fuzzPanelLoader.active
-        sourceComponent: OpacityMask {
-            anchors.fill: fuzzPanel
-            source: fuzzPanel
-            maskSource: bottom_app_rect_mask
-        }
+    OpacityMask {
+        anchors.fill: fuzzPanel
+        source: fuzzPanel
+        maskSource: bottom_app_rect_mask
     }
 
     Rectangle {
@@ -100,9 +92,7 @@ Item {
                 width: control_item.width / 8
                 height: width
                 source: apkIconPath
-                // Avoid forcing async/cache; let Qt choose defaults for stability
-                sourceSize.width: width
-                sourceSize.height: height
+
                 visible: systemUICommonApiServer.currtentLauchAppName !== programName
             }
 
@@ -112,24 +102,19 @@ Item {
                 width: appIcon.width
                 height: width
                 source: apkIconPath
-                // Avoid forcing async/cache; let Qt choose defaults for stability
-                sourceSize.width: width
-                sourceSize.height: height
+
                 visible: systemUICommonApiServer.coldLaunch
             }
 
-            Loader {
-                id: pressedFx
+            Colorize {
+                id: colorize1
                 anchors.fill: appIcon2
-                active: appButton.pressed
-                sourceComponent: Colorize {
-                    anchors.fill: appIcon2
-                    source: appIcon2
-                    saturation: 0.0
-                    lightness: -1.0
-                    opacity: 0.2
-                    cached: true
-                }
+                source: appIcon2
+                saturation: 0.0
+                lightness: -1.0
+                opacity: 0.2
+                cached: true
+                visible: appButton.pressed
             }
         }
     }

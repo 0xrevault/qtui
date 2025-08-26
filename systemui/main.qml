@@ -100,8 +100,6 @@ Window {
                 fillMode: Image.PreserveAspectCrop
                 smooth: true
                 source: "file://" + appCurrtentDir + "/src/ipad/ipad/ipad.jpg"
-                sourceSize.width: width
-                sourceSize.height: height
                 transform: Scale {
                     id: phonebg_scale
                     origin.x: phonebg.width / 2
