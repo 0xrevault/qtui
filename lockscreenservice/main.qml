@@ -32,6 +32,7 @@ Window {
         contentWidth: width
         contentHeight: height * 2
         contentY: 0
+        property bool unlocked: false
         pressDelay: 0
         interactive: true
         flickableDirection: Flickable.VerticalFlick
@@ -51,7 +52,7 @@ Window {
                 height: flk.height
                 fillMode: Image.PreserveAspectCrop
                 smooth: true
-                asynchronous: true
+                asynchronous: false
                 cache: true
                 sourceSize.width: width
                 sourceSize.height: height
@@ -101,14 +102,17 @@ Window {
             }
         }
 
-        onMovementEnded: {
-            if (contentY >= flk.height / 3) {
-                contentY = flk.height;
+        onContentYChanged: {
+            if (!flk.unlocked && contentY >= flk.height / 2) {
+                flk.unlocked = true;
                 window.flags = Qt.FramelessWindowHint | Qt.WindowTransparentForInput;
                 systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Show);
                 window.hide();
-            } else {
-                contentY = 0;
+            }
+        }
+        onMovementEnded: {
+            if (!flk.unlocked) {
+                contentY = contentY >= flk.height / 2 ? flk.height : 0;
             }
         }
     }
@@ -121,7 +125,8 @@ Window {
                 window.flags = Qt.FramelessWindowHint;
                 window.show();
                 window.requestActivate();
-                wallpaper.y = 0;
+                flk.contentY = 0;
+                flk.unlocked = false;
                 systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Hide);
             }
             if (cmd === SystemUICommonApiClient.Quit)

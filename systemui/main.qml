@@ -297,14 +297,16 @@ Window {
                     }
                 ]
                 delegate: Item {
-                    width: Math.max(keyText.implicitWidth, valueText.implicitWidth)
+                    width: keyText.width + 12 + valueText.implicitWidth
                     height: Math.max(keyText.implicitHeight, valueText.implicitHeight)
                     Text {
                         id: keyText
                         text: modelData.k + ":"
+                        width: 120 * scaleFfactor
                         color: "#A0FFFFFF"
                         font.family: "monospace"
                         font.pixelSize: 12 * scaleFfactor
+                        elide: Text.ElideRight
                     }
                     Text {
                         id: valueText
@@ -314,6 +316,7 @@ Window {
                         color: "white"
                         font.family: "monospace"
                         font.pixelSize: 12 * scaleFfactor
+                        wrapMode: Text.NoWrap
                     }
                 }
             }
