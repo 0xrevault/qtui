@@ -149,7 +149,6 @@ Window {
                             lv.highlightRangeMode = ListView.StrictlyEnforceRange;
                             lv.flickDeceleration = 3200; // lower friction = longer glide
                             lv.maximumFlickVelocity = 9000; // allow faster finger drags
-                            lv.dragThreshold = 0;
                             lv.interactive = true;
                         }
                     }

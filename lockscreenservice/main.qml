@@ -42,10 +42,11 @@ Window {
             cache: true
             sourceSize.width: width
             sourceSize.height: height
-            source: "file://" + appCurrtentDir + "/src/ipad/ipad/lockscreen.png"
+            // appCurrtentDir for lockscreenservice is /opt/ui/src/apps, so go up one level
+            source: "file://" + appCurrtentDir + "/../ipad/ipad/lockscreen.png"
             onStatusChanged: {
                 if (status === Image.Error)
-                    console.log("[lockscreen] load error:", source, errorString);
+                    console.log("[lockscreen] load error:", source);
                 else if (status === Image.Ready)
                     console.log("[lockscreen] loaded:", source, width, height);
             }
