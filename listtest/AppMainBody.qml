@@ -3,7 +3,8 @@ import QtQuick.Controls 2.12
 
 Item {
     anchors.fill: parent
-    property int itemHeight: Math.max(56, width / 14)
+    // Target ~10 items per screen: each item takes 1/10 of the view height
+    property int itemHeight: Math.max(56, Math.floor(height / 10))
     property int batchSize: 200
     property int maxItems: 100000000
     property int loadedCount: 0

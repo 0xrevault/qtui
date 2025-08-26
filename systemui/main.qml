@@ -146,8 +146,9 @@ Window {
                     visible: main_swipeView.currentIndex !== 0
                     currentIndex: main_swipeView.currentIndex
                     anchors.bottom: bottomApp.top
-                    anchors.bottomMargin: scaleFfactor * 20
+                    anchors.bottomMargin: scaleFfactor * 8
                     anchors.horizontalCenter: parent.horizontalCenter
+                    z: 100
                     delegate: indicator_delegate
                     Component {
                         id: indicator_delegate

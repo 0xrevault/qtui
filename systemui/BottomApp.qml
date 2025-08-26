@@ -62,10 +62,10 @@ Item {
     Item {
         id: bottom_appItem_parent
         width: item_listView.contentWidth
-        height: control_item.width / 8 * 1.5
+        height: control_item.width / 8 * 1.2
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 20
+        anchors.bottomMargin: 10
 
         ListView {
             id: item_listView
