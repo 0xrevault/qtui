@@ -63,6 +63,8 @@ Item {
                 width: window.width / 8
                 height: width
                 source: apkIconPath
+                asynchronous: true
+                cache: true
 
                 visible: systemUICommonApiServer.currtentLauchAppName !== programName
             }
@@ -73,6 +75,8 @@ Item {
                 width: appIcon.width
                 height: width
                 source: apkIconPath
+                asynchronous: true
+                cache: true
 
                 visible: systemUICommonApiServer.coldLaunch
             }

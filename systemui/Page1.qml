@@ -17,6 +17,8 @@ Item {
     // Size pages by SwipeView to allow proper positioning; avoid anchors on root
     width: SwipeView.view ? SwipeView.view.width : (parent ? parent.width : 0)
     height: SwipeView.view ? SwipeView.view.height : (parent ? parent.height : 0)
+    layer.enabled: true
+    layer.smooth: true
     ApkListModel {
         id: apkListModel
         Component.onCompleted: apkListModel.add(appCurrtentDir + "/src/" + hostName + "/apk1.cfg")
@@ -62,6 +64,8 @@ Item {
                 width: window.width / 8
                 height: width
                 source: apkIconPath
+                asynchronous: true
+                cache: true
 
                 visible: systemUICommonApiServer.currtentLauchAppName !== programName
             }
@@ -72,6 +76,8 @@ Item {
                 width: appIcon.width
                 height: width
                 source: apkIconPath
+                asynchronous: true
+                cache: true
 
                 visible: systemUICommonApiServer.coldLaunch
             }
