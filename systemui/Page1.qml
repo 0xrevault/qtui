@@ -15,8 +15,7 @@ import com.alientek.qmlcomponents 1.0
 Item {
     id: page1
     anchors.fill: parent
-    layer.enabled: true
-    layer.smooth: true
+    // Removed layer.enabled/layer.smooth to avoid rendering glitches on device
     ApkListModel {
         id: apkListModel
         Component.onCompleted: apkListModel.add(appCurrtentDir + "/src/" + hostName + "/apk1.cfg")
@@ -62,8 +61,7 @@ Item {
                 width: window.width / 8
                 height: width
                 source: apkIconPath
-                asynchronous: true
-                cache: true
+                // Avoid forcing async/cache; let Qt choose defaults for stability
                 sourceSize.width: width
                 sourceSize.height: height
                 visible: systemUICommonApiServer.currtentLauchAppName !== programName
@@ -75,8 +73,7 @@ Item {
                 width: appIcon.width
                 height: width
                 source: apkIconPath
-                asynchronous: true
-                cache: true
+                // Avoid forcing async/cache; let Qt choose defaults for stability
                 sourceSize.width: width
                 sourceSize.height: height
                 visible: systemUICommonApiServer.coldLaunch
