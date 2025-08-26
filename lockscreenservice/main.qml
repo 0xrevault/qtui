@@ -8,6 +8,7 @@ Copyright © Deng Zhimao Co., Ltd. 2021-2030. All rights reserved.
 *******************************************************************/
 import QtQuick 2.12
 import QtQuick.Window 2.12
+import QtGraphicalEffects 1.12
 import com.alientek.qmlcomponents 1.0
 
 Window {
@@ -17,12 +18,44 @@ Window {
     height: Screen.desktopAvailableHeight
     x: 0
     y: 0
-    color: "black"
+    color: "transparent"
     flags: Qt.FramelessWindowHint
     property real scaleFacter: window.width / 1024
 
     SystemTime {
         id: systemTime
+    }
+
+    // Lock background fixed, reveal underlying desktop as mask shrinks
+    Image {
+        id: lockBg
+        anchors.fill: parent
+        fillMode: Image.PreserveAspectCrop
+        smooth: true
+        asynchronous: false
+        cache: true
+        sourceSize.width: width
+        sourceSize.height: height
+        source: "file://" + appCurrtentDir + "/src/ipad/ipad/ipad.jpg"
+        visible: false
+    }
+
+    Rectangle {
+        id: maskRect
+        anchors.top: parent.top
+        anchors.left: parent.left
+        width: parent.width
+        height: Math.max(0, parent.height - flk.contentY)
+        color: "white"
+        z: 0
+    }
+
+    OpacityMask {
+        id: maskedBg
+        anchors.fill: parent
+        source: lockBg
+        maskSource: maskRect
+        z: 0
     }
 
     Flickable {
@@ -39,29 +72,16 @@ Window {
         maximumFlickVelocity: 9000
         flickDeceleration: 3600
         boundsBehavior: Flickable.StopAtBounds
+        z: 1
 
         Item {
             id: contentRoot
             width: flk.width
             height: flk.contentHeight
 
-            Image {
-                id: wallpaper
-                anchors.top: parent.top
-                width: flk.width
-                height: flk.height
-                fillMode: Image.PreserveAspectCrop
-                smooth: true
-                asynchronous: false
-                cache: true
-                sourceSize.width: width
-                sourceSize.height: height
-                source: "file://" + appCurrtentDir + "/src/ipad/ipad/ipad.jpg"
-            }
-
             // 占位以便内容可上滑到整屏高度
             Item {
-                anchors.top: wallpaper.bottom
+                anchors.top: parent.top
                 width: 1
                 height: flk.height
             }
@@ -69,8 +89,8 @@ Window {
             Text {
                 id: lockText
                 opacity: 1 - flk.contentY / flk.height
-                y: wallpaper.height - 50 * scaleFacter - opacity * 10
-                anchors.horizontalCenter: wallpaper.horizontalCenter
+                y: flk.height - 50 * scaleFacter - opacity * 10
+                anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("向上轻扫以解锁")
                 color: "white"
                 font.pixelSize: 25 * scaleFacter
@@ -81,8 +101,8 @@ Window {
 
             Text {
                 id: time
-                anchors.top: wallpaper.top
-                anchors.horizontalCenter: wallpaper.horizontalCenter
+                anchors.top: parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 50 * scaleFacter
                 text: systemTime.system_time
                 color: "white"
@@ -93,7 +113,7 @@ Window {
             Text {
                 id: date
                 anchors.top: time.bottom
-                anchors.horizontalCenter: wallpaper.horizontalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 10
                 text: systemTime.system_date2 + " " + systemTime.system_week
                 color: "white"
