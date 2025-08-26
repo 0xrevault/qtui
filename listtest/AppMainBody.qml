@@ -63,7 +63,6 @@ Item {
         pressDelay: 0
         maximumFlickVelocity: 9000
         flickDeceleration: 3500
-        reuseItems: true
         delegate: Item {
             width: ListView.view.width
             height: itemHeight

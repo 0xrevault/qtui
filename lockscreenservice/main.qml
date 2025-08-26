@@ -17,7 +17,7 @@ Window {
     height: Screen.desktopAvailableHeight
     x: 0
     y: 0
-    color: "transparent"
+    color: "black"
     flags: Qt.FramelessWindowHint
     property real scaleFacter: window.width / 1024
 
@@ -57,18 +57,10 @@ Window {
             drag.minimumY: -wallpaper.height
             drag.maximumY: 0
             onReleased: {
-                if (wallpaper.y <= -wallpaper.height / 3) {
+                if (wallpaper.y <= -wallpaper.height / 3)
                     wallpaper.y = -wallpaper.height;
-                } else {
+                else
                     wallpaper.y = 0;
-                    lockText.opacity = 1.0;
-                }
-            }
-            onPositionChanged: function (mouse) {
-                lockText.opacity = 0.0;
-            }
-            onPressed: {
-                lockText.opacity = 1.0;
             }
         }
         Text {
@@ -79,12 +71,7 @@ Window {
             text: qsTr("向上轻扫以解锁")
             color: "white"
             font.pixelSize: 25 * scaleFacter
-            Behavior on opacity {
-                PropertyAnimation {
-                    duration: 1000
-                    easing.type: Easing.Linear
-                }
-            }
+            // Remove opacity animation to avoid continuous updates/flicker
         }
         Dock {}
 
