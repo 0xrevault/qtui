@@ -14,7 +14,9 @@ import com.alientek.qmlcomponents 1.0
 
 Item {
     id: page2
-    // Let SwipeView size and position this page; avoid anchors on the root item
+    anchors.fill: parent
+    width: main_swipeView.width
+    height: main_swipeView.height
     layer.enabled: true
     layer.smooth: true
     ApkListModel {
@@ -61,10 +63,6 @@ Item {
                 width: window.width / 8
                 height: width
                 source: apkIconPath
-                asynchronous: true
-                cache: true
-                sourceSize.width: width
-                sourceSize.height: height
 
                 visible: systemUICommonApiServer.currtentLauchAppName !== programName
             }
@@ -75,10 +73,6 @@ Item {
                 width: appIcon.width
                 height: width
                 source: apkIconPath
-                asynchronous: true
-                cache: true
-                sourceSize.width: width
-                sourceSize.height: height
 
                 visible: systemUICommonApiServer.coldLaunch
             }
@@ -93,18 +87,15 @@ Item {
                 font.bold: true
             }
 
-            Loader {
-                id: pressedFx
+            Colorize {
+                id: colorize1
                 anchors.fill: appIcon2
-                active: appButton.pressed
-                sourceComponent: Colorize {
-                    anchors.fill: appIcon2
-                    source: appIcon2
-                    saturation: 0.0
-                    lightness: -1.0
-                    opacity: 0.2
-                    cached: true
-                }
+                source: appIcon2
+                saturation: 0.0
+                lightness: -1.0
+                opacity: 0.2
+                cached: true
+                visible: appButton.pressed
             }
         }
     }
