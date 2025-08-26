@@ -42,7 +42,7 @@ Window {
             cache: true
             sourceSize.width: width
             sourceSize.height: height
-            source: "file://" + appCurrtentDir + "/src/ipad/ipad/lockscreen.jpg"
+            source: "file://" + appCurrtentDir + "/src/ipad/ipad/lockscreen.png"
         }
     }
 

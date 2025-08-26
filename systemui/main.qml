@@ -102,7 +102,7 @@ Window {
                 width: parent.width
                 fillMode: Image.PreserveAspectCrop
                 smooth: true
-                source: "file://" + appCurrtentDir + "/src/ipad/ipad/homescreen.jpg"
+                source: "file://" + appCurrtentDir + "/src/ipad/ipad/homescreen.png"
                 sourceSize.width: width
                 sourceSize.height: height
                 transform: Scale {
