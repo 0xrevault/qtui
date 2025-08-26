@@ -139,13 +139,13 @@ Window {
                         var lv = main_swipeView.contentItem; // ListView
                         if (lv) {
                             lv.pressDelay = 0;
-                            lv.highlightMoveDuration = 90; // snappier align after release
+                            lv.highlightMoveDuration = 70; // snappier align after release
                             lv.snapMode = ListView.SnapOneItem;
                             lv.preferredHighlightBegin = 0;
                             lv.preferredHighlightEnd = main_swipeView.width;
                             lv.highlightRangeMode = ListView.StrictlyEnforceRange;
-                            lv.flickDeceleration = 4000; // lower friction = longer glide
-                            lv.maximumFlickVelocity = 7000; // allow faster finger drags
+                            lv.flickDeceleration = 3200; // lower friction = longer glide
+                            lv.maximumFlickVelocity = 9000; // allow faster finger drags
                         }
                     }
                     Widgets {}

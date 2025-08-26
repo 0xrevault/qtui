@@ -57,18 +57,17 @@ Item {
         anchors.fill: parent
         model: listModel
         clip: true
-        cacheBuffer: height * 4
+        cacheBuffer: height * 20
         boundsBehavior: Flickable.StopAtBounds
         interactive: true
         pressDelay: 0
-        maximumFlickVelocity: 4000
-        flickDeceleration: 6000
-        delegate: ItemDelegate {
+        maximumFlickVelocity: 9000
+        flickDeceleration: 3500
+        reuseItems: true
+        delegate: Item {
             width: ListView.view.width
             height: itemHeight
-            text: title
-            font.pixelSize: Math.max(20, width / 32)
-            contentItem: Row {
+            Row {
                 spacing: 12
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
@@ -85,18 +84,21 @@ Item {
                         text: title
                         font.bold: true
                         font.pixelSize: Math.max(20, width / 32)
+                        renderType: Text.NativeRendering
                     }
                     Text {
                         text: subtitle
                         color: "#666666"
                         elide: Text.ElideRight
                         font.pixelSize: Math.max(16, width / 36)
+                        renderType: Text.NativeRendering
                     }
                 }
             }
-            onClicked:
-            // no-op
-            {}
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {}
+            }
         }
         onContentYChanged: ensureBuffer()
         onMovementEnded: ensureBuffer()
