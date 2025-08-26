@@ -9,8 +9,8 @@ Copyright © Deng Zhimao Co., Ltd. 2021-2030. All rights reserved.
 import QtQuick 2.12
 
 Item {
-    width: main_swipeView.width
-    height: main_swipeView.height
+    width: SwipeView.view ? SwipeView.view.width : (parent ? parent.width : 0)
+    height: SwipeView.view ? SwipeView.view.height : (parent ? parent.height : 0)
     Text {
         id: time
         anchors.top: parent.top

@@ -14,7 +14,9 @@ import com.alientek.qmlcomponents 1.0
 
 Item {
     id: page1
-    anchors.fill: parent
+    // Size pages by SwipeView to allow proper positioning; avoid anchors on root
+    width: SwipeView.view ? SwipeView.view.width : (parent ? parent.width : 0)
+    height: SwipeView.view ? SwipeView.view.height : (parent ? parent.height : 0)
     ApkListModel {
         id: apkListModel
         Component.onCompleted: apkListModel.add(appCurrtentDir + "/src/" + hostName + "/apk1.cfg")
