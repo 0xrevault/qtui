@@ -43,6 +43,12 @@ Window {
             sourceSize.width: width
             sourceSize.height: height
             source: "file://" + appCurrtentDir + "/src/ipad/ipad/lockscreen.png"
+            onStatusChanged: {
+                if (status === Image.Error)
+                    console.log("[lockscreen] load error:", source, errorString);
+                else if (status === Image.Ready)
+                    console.log("[lockscreen] loaded:", source, width, height);
+            }
         }
     }
 
@@ -135,7 +141,7 @@ Window {
                 window.requestActivate();
                 flk.contentY = 0;
                 flk.unlocked = false;
-                systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Hide);
+                systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Show);
             }
             if (cmd === SystemUICommonApiClient.Quit)
                 Qt.quit();
