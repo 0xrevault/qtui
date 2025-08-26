@@ -25,74 +25,88 @@ Window {
         id: systemTime
     }
 
-    Image {
-        id: wallpaper
-        x: 0
-        y: 0
-        height: parent.height
-        width: parent.width
-        opacity: 1 - Math.abs(wallpaper.y) / wallpaper.height
-        fillMode: Image.PreserveAspectCrop
-        smooth: true
-        source: "file://" + appCurrtentDir + "/src/ipad/ipad/ipad.jpg"
-        Behavior on y {
-            PropertyAnimation {
-                duration: 200
-                easing.type: Easing.Linear
+    Flickable {
+        id: flk
+        anchors.fill: parent
+        contentWidth: width
+        contentHeight: height * 2
+        contentY: 0
+        pressDelay: 0
+        interactive: true
+        flickableDirection: Flickable.VerticalFlick
+        maximumFlickVelocity: 8000
+        flickDeceleration: 3800
+        boundsBehavior: Flickable.StopAtBounds
+
+        Item {
+            id: contentRoot
+            width: flk.width
+            height: flk.contentHeight
+
+            Image {
+                id: wallpaper
+                anchors.top: parent.top
+                width: flk.width
+                height: flk.height
+                fillMode: Image.PreserveAspectCrop
+                smooth: true
+                asynchronous: true
+                cache: true
+                source: "file://" + appCurrtentDir + "/src/ipad/ipad/ipad.jpg"
+            }
+
+            // 占位以便内容可上滑到整屏高度
+            Item {
+                anchors.top: wallpaper.bottom
+                width: 1
+                height: flk.height
+            }
+
+            Text {
+                id: lockText
+                opacity: 1 - flk.contentY / flk.height
+                y: wallpaper.height - 50 * scaleFacter - opacity * 10
+                anchors.horizontalCenter: wallpaper.horizontalCenter
+                text: qsTr("向上轻扫以解锁")
+                color: "white"
+                font.pixelSize: 25 * scaleFacter
+                renderType: Text.NativeRendering
+            }
+
+            Dock {}
+
+            Text {
+                id: time
+                anchors.top: wallpaper.top
+                anchors.horizontalCenter: wallpaper.horizontalCenter
+                anchors.topMargin: 50 * scaleFacter
+                text: systemTime.system_time
+                color: "white"
+                font.pixelSize: 80 * scaleFacter
+                renderType: Text.NativeRendering
+            }
+
+            Text {
+                id: date
+                anchors.top: time.bottom
+                anchors.horizontalCenter: wallpaper.horizontalCenter
+                anchors.topMargin: 10
+                text: systemTime.system_date2 + " " + systemTime.system_week
+                color: "white"
+                font.pixelSize: 30 * scaleFacter
+                renderType: Text.NativeRendering
             }
         }
-        onYChanged: {
-            if (Math.abs(wallpaper.y) == wallpaper.height) {
+
+        onMovementEnded: {
+            if (contentY >= flk.height / 3) {
+                contentY = flk.height;
                 window.flags = Qt.FramelessWindowHint | Qt.WindowTransparentForInput;
                 systemUICommonApiClient.askSystemUItohideOrShow(SystemUICommonApiClient.Show);
                 window.hide();
-                lockText.opacity = 1.0;
+            } else {
+                contentY = 0;
             }
-        }
-        MouseArea {
-            anchors.fill: parent
-            drag.target: wallpaper
-            drag.maximumX: 0
-            drag.minimumX: 0
-            drag.minimumY: -wallpaper.height
-            drag.maximumY: 0
-            onReleased: {
-                if (wallpaper.y <= -wallpaper.height / 3)
-                    wallpaper.y = -wallpaper.height;
-                else
-                    wallpaper.y = 0;
-            }
-        }
-        Text {
-            id: lockText
-            opacity: 1 - Math.abs(wallpaper.y) / wallpaper.height
-            y: parent.height - 50 * scaleFacter - opacity * 10
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("向上轻扫以解锁")
-            color: "white"
-            font.pixelSize: 25 * scaleFacter
-            // Remove opacity animation to avoid continuous updates/flicker
-        }
-        Dock {}
-
-        Text {
-            id: time
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.topMargin: 50 * scaleFacter
-            text: systemTime.system_time
-            color: "white"
-            font.pixelSize: 80 * scaleFacter
-        }
-
-        Text {
-            id: date
-            anchors.top: time.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.topMargin: 10
-            text: systemTime.system_date2 + " " + systemTime.system_week
-            color: "white"
-            font.pixelSize: 30 * scaleFacter
         }
     }
 
