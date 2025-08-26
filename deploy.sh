@@ -11,19 +11,13 @@ REMOTE_UI_DIR="/opt/ui"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-echo "[1/3] Packaging local 'ui' into archive"
-LOCAL_UI_DIR="$SCRIPT_DIR/ui"
-if [ ! -d "$LOCAL_UI_DIR" ]; then
-    echo "Error: Local 'ui' directory not found at: $LOCAL_UI_DIR" >&2
-    echo "Tip: Run ./build_ui.sh first."
+echo "[1/3] Using prebuilt ui.zip"
+ARCHIVE_PATH="$SCRIPT_DIR/ui.zip"
+if [ ! -f "$ARCHIVE_PATH" ]; then
+    echo "Error: ui.zip not found at: $ARCHIVE_PATH" >&2
+    echo "Tip: Run ./build_ui.sh to produce ui.zip, or place it at project root." >&2
     exit 1
 fi
-
-ARCHIVE_PATH="$(mktemp -t ui-archive-XXXXXX.tar.gz)"
-# macOS xattrs guard (harmless on Linux)
-export COPYFILE_DISABLE=1
-# Create archive with deterministic order
-( cd "$SCRIPT_DIR" && LC_ALL=C tar -czf "$ARCHIVE_PATH" ui )
 
 echo "[2/3] Upload archive, verify checksum, and extract on remote"
 if command -v sha256sum >/dev/null 2>&1; then
@@ -32,10 +26,10 @@ else
   LOCAL_SHA=$(shasum -a 256 "$ARCHIVE_PATH" | awk '{print $1}')
 fi
 
-scp "$ARCHIVE_PATH" "$HOST:/tmp/ui_deploy.tar.gz"
+scp "$ARCHIVE_PATH" "$HOST:/tmp/ui_deploy.zip"
 
 # Compute remote checksum in clear, split form
-REMOTE_FILE="/tmp/ui_deploy.tar.gz"
+REMOTE_FILE="/tmp/ui_deploy.zip"
 REMOTE_SHA=$(ssh "$HOST" "sha256sum $REMOTE_FILE 2>/dev/null || shasum -a 256 $REMOTE_FILE" | awk '{print $1}' || true)
 
 if [ -z "${REMOTE_SHA:-}" ]; then
@@ -53,12 +47,13 @@ fi
 # Extract on remote in separate, clear steps
 ssh "$HOST" "set -e; rm -rf '$REMOTE_UI_DIR'"
 ssh "$HOST" "set -e; mkdir -p /opt"
-ssh "$HOST" "set -e; tar -xzf $REMOTE_FILE -C /opt"
+# Try unzip; fallback to busybox unzip if available
+ssh "$HOST" "set -e; (unzip -o $REMOTE_FILE -d /opt >/dev/null 2>&1 || busybox unzip -o $REMOTE_FILE -d /opt >/dev/null)"
 ssh "$HOST" "set -e; rm -f $REMOTE_FILE"
 ssh "$HOST" "set -e; [ -f '$REMOTE_UI_DIR/systemui' ] && chmod +x '$REMOTE_UI_DIR/systemui' || true"
 ssh "$HOST" "set -e; sync"
 
-rm -f "$ARCHIVE_PATH"
+# Keep local ui.zip as it is a build artifact tracked by the repo
 
 echo "[3/3] Deploy completed successfully."
 
