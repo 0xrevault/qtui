@@ -18,6 +18,9 @@ Window {
     width: Screen.desktopAvailableWidth
     height: Screen.desktopAvailableHeight
     visible: true
+    // FPS measurement
+    property int __fpsCount: 0
+    property real fps: 0
     property real scaleFfactor: window.width / 720
     flags: Qt.FramelessWindowHint
     x: 0
@@ -236,7 +239,7 @@ Window {
         running: true
     }
 
-    // Performance overlay - fixed at top-left
+    // Performance overlay - fixed at top-left, top-most z
     Rectangle {
         id: perfOverlay
         anchors.left: parent.left
@@ -247,19 +250,73 @@ Window {
         radius: 6
         border.color: "#33ffffff"
         border.width: 1
-        z: 1000
-        width: perfText.paintedWidth + 16
-        height: perfText.paintedHeight + 16
-        Text {
-            id: perfText
-            text: memoryWatcher.overlayText
-            color: "white"
-            font.family: "monospace"
-            font.pixelSize: 12 * scaleFfactor
-            wrapMode: Text.Wrap
+        z: 100000
+        width: perfGrid.implicitWidth + 16
+        height: perfGrid.implicitHeight + 16
+        Grid {
+            id: perfGrid
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.margins: 8
+            columns: 2
+            rowSpacing: 4
+            columnSpacing: 12
+            Repeater {
+                model: [
+                    {
+                        k: "CPU",
+                        v: memoryWatcher.cpuUsagePercent + "%"
+                    },
+                    {
+                        k: "CPU Freq",
+                        v: memoryWatcher.cpuFreqMHz + " MHz"
+                    },
+                    {
+                        k: "Governor",
+                        v: memoryWatcher.governor
+                    },
+                    {
+                        k: "Mem Used",
+                        v: memoryWatcher.memoryUsedPercent + "%"
+                    },
+                    {
+                        k: "Temp",
+                        v: memoryWatcher.temperatureC
+                    },
+                    {
+                        k: "Devfreq",
+                        v: memoryWatcher.devfreqMHz + " MHz"
+                    },
+                    {
+                        k: "GPU",
+                        v: memoryWatcher.gpuInfo
+                    },
+                    {
+                        k: "FPS",
+                        v: Math.round(window.fps)
+                    }
+                ]
+                delegate: Item {
+                    width: Math.max(keyText.implicitWidth, valueText.implicitWidth)
+                    height: Math.max(keyText.implicitHeight, valueText.implicitHeight)
+                    Text {
+                        id: keyText
+                        text: modelData.k + ":"
+                        color: "#A0FFFFFF"
+                        font.family: "monospace"
+                        font.pixelSize: 12 * scaleFfactor
+                    }
+                    Text {
+                        id: valueText
+                        anchors.left: keyText.right
+                        anchors.leftMargin: 12
+                        text: modelData.v
+                        color: "white"
+                        font.family: "monospace"
+                        font.pixelSize: 12 * scaleFfactor
+                    }
+                }
+            }
         }
     }
 
