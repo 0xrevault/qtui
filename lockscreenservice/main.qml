@@ -22,6 +22,21 @@ Window {
     flags: Qt.FramelessWindowHint
     property real scaleFacter: window.width / 1024
 
+    // 兜底的“桌面壁纸”背景，防止首次上滑时露出黑底
+    // 使用与桌面相同的壁纸路径，以保证视觉一致
+    Image {
+        id: desktopFallback
+        anchors.fill: parent
+        z: -1
+        fillMode: Image.PreserveAspectCrop
+        smooth: true
+        asynchronous: true
+        cache: true
+        sourceSize.width: width
+        sourceSize.height: height
+        source: "file://" + appCurrtentDir + "/src/ipad/ipad/homescreen.png"
+    }
+
     SystemTime {
         id: systemTime
     }
