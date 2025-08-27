@@ -62,16 +62,19 @@ Item {
     Item {
         id: bottom_appItem_parent
         width: item_listView.contentWidth
-        height: control_item.width / 8 * 1.2
+        // 使容器更高一些，并与按钮高度一致，避免视觉上贴底与裁剪
+        height: Math.round(control_item.width / 6)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
+        // 增加与屏幕底部的距离，避免“贴底”
+        anchors.bottomMargin: Math.round(control_item.width / 36)
 
         ListView {
             id: item_listView
             visible: true
             anchors.centerIn: parent
-            height: control_item.width / 8 * 1.5
+            // 列表高度与容器高度一致，保证垂直居中
+            height: parent.height
             width: item_listView.contentWidth
             interactive: false
             orientation: ListView.Horizontal
@@ -88,8 +91,9 @@ Item {
         id: item_listView_delegate
         Button {
             id: appButton
-            width: control_item.width / 6
-            height: width
+            // 按钮为正方形，沿用容器高度，确保垂直居中不被裁剪
+            height: bottom_appItem_parent.height
+            width: height
             enabled: installed
             onClicked: {
                 launchActivity(programName, mapToGlobal(appIcon.x, appIcon.y).x, mapToGlobal(appIcon.x, appIcon.y).y, appIcon, apkIconPath, main_swipeView.currentIndex, SystemUICommonApiServer.ClickIcon);
@@ -97,7 +101,8 @@ Item {
             background: Image {
                 id: appIcon
                 anchors.centerIn: parent
-                width: control_item.width / 8
+                // 图标相对按钮留出内边距
+                width: Math.round(appButton.height * 0.8)
                 height: width
                 source: apkIconPath
                 asynchronous: true

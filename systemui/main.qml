@@ -165,8 +165,9 @@ Window {
                     count: main_swipeView.count
                     visible: main_swipeView.currentIndex !== 0
                     currentIndex: main_swipeView.currentIndex
+                    // 提高页面指示器位置，避免被底部容器挡住
                     anchors.bottom: bottomApp.top
-                    anchors.bottomMargin: scaleFfactor * 8
+                    anchors.bottomMargin: scaleFfactor * 28
                     anchors.horizontalCenter: parent.horizontalCenter
                     z: 100
                     delegate: indicator_delegate
